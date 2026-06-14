@@ -5,6 +5,9 @@ const cookieParser = require("cookie-parser");
 const env = require("./config/env");
 
 const app = express();
+const testRoutes = require("./routes/test.route");
+
+app.use("/api/test", testRoutes);
 
 app.use(
   cors({
