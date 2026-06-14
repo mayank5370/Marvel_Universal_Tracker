@@ -5,9 +5,6 @@ const cookieParser = require("cookie-parser");
 const env = require("./config/env");
 
 const app = express();
-const testRoutes = require("./routes/test.route");
-
-app.use("/api/test", testRoutes);
 
 app.use(
   cors({
@@ -19,6 +16,15 @@ app.use(
 app.use(express.json());
 
 app.use(cookieParser());
+
+const testRoutes = require("./routes/test.route");
+
+const authRoutes = require("./modules/auth/auth.routes");
+
+app.use("/api/auth", authRoutes);
+
+app.use("/api/test", testRoutes);
+
 
 app.get("/", (req, res) => {
   res.status(200).json({
