@@ -1,7 +1,6 @@
 const express = require("express");
-
 const authController = require("./auth.controller");
-
+const auth = require("../../middlewares/auth");
 const router = express.Router();
 
 router.post(
@@ -13,5 +12,12 @@ router.post(
     "/login",
     authController.login
 );
+
+router.get(
+        "/me",
+        auth,
+        authController.getProfile
+);
+
 
 module.exports = router;

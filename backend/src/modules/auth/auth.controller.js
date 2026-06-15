@@ -1,9 +1,9 @@
-const {registerSchema} = require("./auth.validation");
+const { registerSchema } = require("./auth.validation");
 const authService = require("./auth.service");
-const {loginSchema} = require("./auth.validation");
+const { loginSchema } = require("./auth.validation");
 const { success } = require("zod");
 
-const register = async(req, res) => {
+const register = async (req, res) => {
     try {
         const validateData = registerSchema.parse(req.body);
         const user = await authService.registerUser(validateData);
@@ -13,7 +13,7 @@ const register = async(req, res) => {
             message: "User register succefully",
             data: user,
         });
-    }catch(error){
+    } catch (error) {
         console.log(error);
         return res.status(400).json({
             success: false,
@@ -23,8 +23,8 @@ const register = async(req, res) => {
 };
 
 
-const login = async(req, res) => {
-    try{
+const login = async (req, res) => {
+    try {
         const validateData = loginSchema.parse(req.body);
         const result = await authService.loginUser(validateData);
 
@@ -33,7 +33,7 @@ const login = async(req, res) => {
             message: "Login Successfully",
             data: result,
         });
-    }catch (error) {
+    } catch (error) {
         return res.status(404).json({
             success: false,
             message: error.message,
@@ -42,7 +42,16 @@ const login = async(req, res) => {
 };
 
 
+const getProfile = async (req, res) => {
+    return res.status(200).json({
+        success: true,
+        data: req.user,
+    });
+};
+
+
 module.exports = {
     register,
     login,
+    getProfile,
 };

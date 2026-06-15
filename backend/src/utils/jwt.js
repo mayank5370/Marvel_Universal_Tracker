@@ -21,7 +21,26 @@ const generateReferenceToken = (payload) => {
     );
 };
 
+//Added JWT Verify Headers
+const  verifyAccessToken = (token) => {
+    return jwt.verify(
+        token,
+        env.jwtAccessSecret
+    );
+};
+
+
+const verifyRefreshToekn = (token) => {
+    return jwt.verify(
+        token,
+        env.jwtRefreshSecret
+    );
+};
+
+
 module.exports = {
     generateAccessToken,
     generateReferenceToken,
+    verifyAccessToken,
+    verifyRefreshToekn,
 };
