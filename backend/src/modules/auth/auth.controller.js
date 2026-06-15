@@ -1,5 +1,6 @@
 const {registerSchema} = require("./auth.validation");
 const authService = require("./auth.service");
+const {loginSchema} = require("./auth.validation");
 const { success } = require("zod");
 
 const register = async(req, res) => {
@@ -21,6 +22,27 @@ const register = async(req, res) => {
     }
 };
 
+
+const login = async(req, res) => {
+    try{
+        const validateData = loginSchema.parse(req.body);
+        const result = await authService.loginUser(validateData);
+
+        return res.status(200).json({
+            success: true,
+            message: "Login Successfully",
+            data: result,
+        });
+    }catch (error) {
+        return res.status(404).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+
 module.exports = {
     register,
+    login,
 };
