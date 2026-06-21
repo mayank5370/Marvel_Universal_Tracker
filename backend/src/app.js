@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const env = require("./config/env");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
 const adminRoutes = require("./modules/auth/admin.route");
+const contentRoutes = require("./modules/content/content.routes");
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/test", testRoutes);
 
 app.use("/api/admin", adminRoutes);
+
+app.use("/api", contentRoutes);
 
 app.use(globalErrorHandler);
 
