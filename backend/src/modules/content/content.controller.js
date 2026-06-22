@@ -18,6 +18,21 @@ const ingestContent = async(req, res, next) => {
     }
 };
 
+const getFeed = async(req, res, next) => {
+    try{
+        const result = await contentService.getFeed();
+
+        return res.status(200).json({
+            success: true,
+            data: result,   
+        });
+    }catch (error) {
+        next(error);
+    }
+};
+
+
 module.exports = {
     ingestContent,
+    getFeed,
 };

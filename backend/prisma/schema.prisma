@@ -48,7 +48,7 @@ model User {
 
 model Source {
   id String @id @default(cuid())
-  name String
+  name String @unique
   baseUrl String?
   isActive Boolean @default(true)
   contentItems ContentItem[]
