@@ -5,6 +5,7 @@ const env = require("./config/env");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
 const adminRoutes = require("./modules/auth/admin.route");
 const contentRoutes = require("./modules/content/content.routes");
+const watchlistRoutes = require("./modules/watchlist/watchlist.routes");
 
 const app = express();
 
@@ -32,6 +33,8 @@ app.use("/api/test", testRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use("/api", contentRoutes);
+
+app.use("/api", watchlistRoutes);
 
 app.use(globalErrorHandler);
 
