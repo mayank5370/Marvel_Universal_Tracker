@@ -1,4 +1,3 @@
-const { success } = require("zod");
 const contentService = require("./content.service");
 
 const ingestContent = async(req, res, next) => {
@@ -19,20 +18,45 @@ const ingestContent = async(req, res, next) => {
 };
 
 const getFeed = async(req, res, next) => {
-    try{
-        const result = await contentService.getFeed();
+    try {
+        const page = Number(req.query.page) || 1;
+
+        const limit = Number(req.query.page) || 10;
+
+        const result = await contentService.getFeed(
+            page,
+            limit
+        );
 
         return res.status(200).json({
             success: true,
-            data: result,   
+            ...result,
         });
     }catch (error) {
         next(error);
     }
 };
 
+const getContentById = async(req, res, next) => {
+    try{
+        const result = await contentService.getContentById(
+            req.params.id
+        );
+        
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+
+    }catch (error) {
+        next(error);
+    }
+};
+
+
 
 module.exports = {
     ingestContent,
     getFeed,
+    getContentById,
 };

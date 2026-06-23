@@ -76,46 +76,95 @@ const createContent = async (payload) => {
   return result;
 };
 
-const getFeed = async () => {
-  const feed = await prisma.contentItem.findMany({
+const getFeed = async (
+  page = 1,
+  limit = 10
+) => {
+
+  const skip =
+    (page - 1) * limit;
+
+  const total =
+    await prisma.contentItem.count({
+      where: {
+        status: "PENDING",
+      },
+    });
+
+  const feed =
+    await prisma.contentItem.findMany({
+      where: {
+        status: "PENDING",
+      },
+
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        summary: true,
+        thumbnailUrl: true,
+        publishedAt: true,
+        contentType: true,
+
+        source: {
+          select: {
+            name: true,
+          },
+        },
+
+        aiEnrichment: {
+          select: {
+            tldr: true,
+            importanceScore: true,
+            spoilerRisk: true,
+            tags: true,
+          },
+        },
+      },
+
+      orderBy: {
+        publishedAt: "desc",
+      },
+
+      skip,
+      take: limit,
+    });
+
+  return {
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages:
+        Math.ceil(total / limit),
+    },
+
+    data: feed,
+  };
+};
+
+const getContentById = async (id) => {
+  const content = await prisma.contentItem.findUnique({
     where: {
-      status: "PENDING",
+      id,
     },
 
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      summary: true,
-      thumbnailUrl: true,
-      publishedAt: true,
-      contentType: true,
-
-      source: {
-        select: {
-          name: true,
-        },
-      },
-
-      aiEnrichment: {
-        select: {
-          tldr: true,
-          importanceScore: true,
-          spoilerRisk: true,
-          tags: true,
-        },
-      },
-    },
-
-    orderBy: {
-      publishedAt: "desc",
+    include: {
+      source: true,
+      aiEnrichment: true,
+      prerequisites: true,
     },
   });
 
-  return feed;
-};
+  if (!content) {
+    throw new Error("Content Not Found!");
+  }
+
+  return content;
+}
 
 module.exports = {
   createContent,
   getFeed,
+  getContentById,
 };
