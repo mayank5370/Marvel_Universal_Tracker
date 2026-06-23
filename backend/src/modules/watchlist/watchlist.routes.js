@@ -24,4 +24,10 @@ router.patch(
     watchlistController.updateWatchlistItem
 );
 
+router.delete(
+    "/watchlist/:id",
+    auth,
+    watchlistController.removeWatchlistItem
+);
+
 module.exports = router;

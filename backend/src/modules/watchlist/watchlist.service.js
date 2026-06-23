@@ -78,9 +78,30 @@ const updateWatchlistItem = async (userId, watchlistId, watched) => {
     return update
 };
 
+const removeWatchlistItem = async (userId, watchlistId) => {
+    const existing = await prisma.watchlistItem.findFirst({
+        where: {
+            id: watchlistId,
+            userId,
+        },
+    });
+
+    if (!existing) {
+        throw new Error("Watchlist Item not Found");
+    }
+
+    await prisma.watchlistItem.delete({
+        where: {
+            id: watchlistId,
+        },
+    });
+    return true;
+};
+
 
 module.exports = {
     addToWatchlist,
     getMyWatchList,
     updateWatchlistItem,
+    removeWatchlistItem,
 };

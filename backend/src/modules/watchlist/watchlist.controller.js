@@ -54,8 +54,25 @@ const updateWatchlistItem = async (req, res, next) => {
     }
 };
 
+const removeWatchlistItem = async (req, res, next) => {
+    try {
+        await watchlistService.removeWatchlistItem(
+            req.user.userId,
+            req.params.id
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Remove from Watchlist",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     addToWatchlist,
     getMyWatchList,
     updateWatchlistItem,
+    removeWatchlistItem,
 };
