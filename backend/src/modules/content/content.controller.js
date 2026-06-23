@@ -1,6 +1,6 @@
 const contentService = require("./content.service");
 
-const ingestContent = async(req, res, next) => {
+const ingestContent = async (req, res, next) => {
     try {
         const result = await contentService.createContent(
             req.body
@@ -11,17 +11,17 @@ const ingestContent = async(req, res, next) => {
             message: "Content Ingested",
             data: result,
         });
-    
-    }catch (error){
+
+    } catch (error) {
         next(error);
     }
 };
 
-const getFeed = async(req, res, next) => {
+const getFeed = async (req, res, next) => {
     try {
         const page = Number(req.query.page) || 1;
 
-        const limit = Number(req.query.page) || 10;
+        const limit = Number(req.query.limit) || 10;
 
         const result = await contentService.getFeed(
             page,
@@ -32,26 +32,57 @@ const getFeed = async(req, res, next) => {
             success: true,
             ...result,
         });
-    }catch (error) {
+    } catch (error) {
         next(error);
     }
 };
 
-const getContentById = async(req, res, next) => {
-    try{
+const getContentById = async (req, res, next) => {
+    try {
         const result = await contentService.getContentById(
             req.params.id
         );
-        
+
         return res.status(200).json({
             success: true,
             data: result,
         });
 
-    }catch (error) {
+    } catch (error) {
         next(error);
     }
 };
+
+const searchContent = async (req, res, next) => {
+    try {
+        const {
+            q,
+            type,
+            spoilerRisk,
+            sort,
+        } = req.query;
+
+        const result = await contentService.searchContent({
+            q,
+            type,
+            spoilerRisk,
+            sort,
+        });
+
+
+        return res.status(200).json({
+            success: true,
+            count: result.length,
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+
+
+};
+
 
 
 
@@ -59,4 +90,5 @@ module.exports = {
     ingestContent,
     getFeed,
     getContentById,
+    searchContent,
 };

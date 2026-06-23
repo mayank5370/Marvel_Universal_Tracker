@@ -161,10 +161,96 @@ const getContentById = async (id) => {
   }
 
   return content;
-}
+};
+
+const searchContent = async ({
+  q,
+  type,
+  spoilerRisk,
+  sort,
+}) => {
+
+  const where = {
+    status: "PENDING",
+  };
+
+  if (q) {
+    where.OR = [
+      {
+        title: {
+          contains: q,
+          mode: "insensitive",
+        },
+      },
+      {
+        summary: {
+          contains: q,
+          mode: "insensitive",
+        },
+      },
+    ];
+  }
+
+  if (type) {
+    where.contentType = type;
+  }
+
+  const orderBy = {};
+
+  if (sort === "importance") {
+    orderBy.aiEnrichment = {
+      importanceScore: "desc",
+    };
+  } else {
+    orderBy.publishedAt = "desc";
+  }
+
+  const results =
+    await prisma.contentItem.findMany({
+
+      where: {
+        ...where,
+
+        ...(spoilerRisk && {
+          aiEnrichment: {
+            spoilerRisk,
+          },
+        }),
+      },
+
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        summary: true,
+        thumbnailUrl: true,
+        publishedAt: true,
+        contentType: true,
+
+        source: {
+          select: {
+            name: true,
+          },
+        },
+
+        aiEnrichment: {
+          select: {
+            importanceScore: true,
+            spoilerRisk: true,
+            tldr: true,
+          },
+        },
+      },
+
+      orderBy,
+    });
+
+  return results;
+};
 
 module.exports = {
   createContent,
   getFeed,
   getContentById,
+  searchContent,
 };

@@ -8,6 +8,11 @@ router.get(
 );
 
 router.get(
+    "/content/search",
+    contentController.searchContent
+);
+
+router.get(
     "/content/:id",
     contentController.getContentById
 );
