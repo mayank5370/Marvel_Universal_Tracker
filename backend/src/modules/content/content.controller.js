@@ -83,12 +83,81 @@ const searchContent = async (req, res, next) => {
 
 };
 
+const approveContent = async (req, res, next) => {
+    try {
+        const result = await contentService.approveContent(
+            req.params.id
+        );
 
+        return res.status(200).json({
+            success: true,
+            message: "Content Approved",
+            data: result,
+        });
 
+    } catch (error) {
+        next(error);
+    }
+};
+
+const rejectContent = async (req, res, next) => {
+    try {
+        const result = await contentService.rejectContent(
+            req.params.id
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Content Rejected",
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getPendingContent = async (req, res, next) => {
+    try {
+
+        const result =
+            await contentService.getPendingContent();
+
+        return res.status(200).json({
+            success: true,
+            count: result.length,
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getAllContentAdmin = async (req, res, next) => {
+    try {
+
+        const result =
+            await contentService.getAllContentAdmin();
+
+        return res.status(200).json({
+            success: true,
+            count: result.length,
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 module.exports = {
     ingestContent,
     getFeed,
     getContentById,
     searchContent,
+    approveContent,
+    rejectContent,
+    getPendingContent,
+    getAllContentAdmin,
 };

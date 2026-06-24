@@ -87,14 +87,14 @@ const getFeed = async (
   const total =
     await prisma.contentItem.count({
       where: {
-        status: "PENDING",
+        status: "APPROVED",
       },
     });
 
   const feed =
     await prisma.contentItem.findMany({
       where: {
-        status: "PENDING",
+        status: "APPROVED",
       },
 
       select: {
@@ -171,7 +171,7 @@ const searchContent = async ({
 }) => {
 
   const where = {
-    status: "PENDING",
+    status: "APPROVED",
   };
 
   if (q) {
@@ -248,9 +248,85 @@ const searchContent = async ({
   return results;
 };
 
+const approveContent = async (contentId) => {
+  const content = await prisma.contentItem.update({
+
+    where: {
+      id: contentId,
+    },
+
+    data: {
+      status: "APPROVED",
+    },
+  });
+
+  return content;
+
+};
+
+const rejectContent = async (contentId) => {
+  const content = await prisma.contentItem.update({
+
+    where: {
+      id: contentId,
+    },
+
+    data: {
+      status: "REJECTED",
+    },
+  });
+
+  return content;
+
+};
+
+const getPendingContent = async () => {
+
+  const contents =
+    await prisma.contentItem.findMany({
+
+      where: {
+        status: "PENDING",
+      },
+
+      include: {
+        source: true,
+        aiEnrichment: true,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+  return contents;
+};
+
+const getAllContentAdmin = async () => {
+
+  const contents =
+    await prisma.contentItem.findMany({
+
+      include: {
+        source: true,
+        aiEnrichment: true,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+  return contents;
+};
+
 module.exports = {
   createContent,
   getFeed,
   getContentById,
   searchContent,
+  approveContent,
+  rejectContent,
+  getPendingContent,
+  getAllContentAdmin,
 };
