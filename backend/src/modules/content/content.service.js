@@ -76,6 +76,17 @@ const createContent = async (payload) => {
   return result;
 };
 
+const checkDuplicate = async (sourceUrl) => {
+  const content = await prisma.contentItem.findUnique({
+    where: {
+      sourceUrl,
+    },
+  });
+  return {
+    exists: !!content,
+  };
+};
+
 const getFeed = async (
   page = 1,
   limit = 10
@@ -322,6 +333,7 @@ const getAllContentAdmin = async () => {
 
 module.exports = {
   createContent,
+  checkDuplicate,
   getFeed,
   getContentById,
   searchContent,

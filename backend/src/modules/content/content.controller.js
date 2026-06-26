@@ -1,5 +1,20 @@
 const contentService = require("./content.service");
 
+const checkDuplicate = async(req, res, next) => {
+    try{
+        const {sourceUrl} = req.query;
+
+        const result = await contentService.checkDuplicate(sourceUrl);
+        
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+    }catch(error){
+        next(error);
+    }
+};
+
 const ingestContent = async (req, res, next) => {
     try {
         const result = await contentService.createContent(
@@ -151,7 +166,10 @@ const getAllContentAdmin = async (req, res, next) => {
     }
 };
 
+
+
 module.exports = {
+    checkDuplicate,     
     ingestContent,
     getFeed,
     getContentById,

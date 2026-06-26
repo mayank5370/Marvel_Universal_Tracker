@@ -4,6 +4,12 @@ const auth = require("../../middlewares/auth");
 const authorize = require("../../middlewares/authorize");
 const router = express.Router();
 
+
+router.get(
+    "/content/check",
+    contentController.checkDuplicate
+);
+
 router.get(
     "/content/feed",
     contentController.getFeed
