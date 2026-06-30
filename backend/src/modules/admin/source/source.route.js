@@ -12,5 +12,12 @@ router.get(
     sourceController.getAllSources
 );
 
+router.post(
+    "/sources",
+    auth,
+    authorize("ADMIN"),
+    sourceController.createSource
+);
+
 
 module.exports = router;

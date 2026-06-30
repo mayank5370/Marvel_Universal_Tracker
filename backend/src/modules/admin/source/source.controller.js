@@ -15,6 +15,22 @@ const getAllSources = async (req, res, next) => {
     }
 };
 
+const createSource = async (req, res, next) => {
+    try {
+        const result = await sourceService.createSource(req.body);
+
+        return res.status(201).json({
+            success: true,
+            message: "Source created successfully",
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getAllSources,
+    createSource,
 };
