@@ -44,17 +44,57 @@ const createSource = async (payload) => {
     return source;
 };
 
-const updateSource = async(id, payload) => {
-    let {name, baseUrl} = payload;
+const updatedSource = async (id, payload) => {
+    let { name, baseUrl } = payload;
 
-    if(!name || !baseUrl){
+    if (!name || !baseUrl) {
         throw new Error("Name and BaseUrl required");
     }
 
-    
-}
+    name = name.trim();
+    baseUrl = baseUrl.trim();
+
+    const source = await prisma.source.findUnique({
+        where: {
+            id,
+        },
+    });
+
+    if (!source) {
+        throw new Error("Source not found");
+    }
+
+    const duplicate = await prisma.source.findFirst({
+        where: {
+            id: {
+                not: id,
+            },
+            OR: [
+                { name },
+                { baseUrl },
+            ],
+        },
+    });
+
+    if (duplicate) {
+        throw new Error("Another source already exists with this name oe URL");
+    }
+
+    const updatedSource = await prisma.source.update({
+        where: {
+            id,
+        },
+        data: {
+            name,
+            baseUrl,
+        },
+    });
+
+    return updatedSource;
+};
 
 module.exports = {
     getAllSources,
     createSource,
+    updatedSource,
 };

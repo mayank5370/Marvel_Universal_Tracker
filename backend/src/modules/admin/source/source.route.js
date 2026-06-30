@@ -19,5 +19,11 @@ router.post(
     sourceController.createSource
 );
 
+router.patch(
+    "/sources/:id",
+    auth,
+    authorize("ADMIN"),
+    sourceController.updatedSource
+);
 
 module.exports = router;
