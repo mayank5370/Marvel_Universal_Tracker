@@ -93,8 +93,32 @@ const updatedSource = async (id, payload) => {
     return updatedSource;
 };
 
+const toggleSource = async (id) => {
+    const source = await prisma.source.findUnique({
+        where: {
+            id,
+        },
+    });
+
+    if (!source) {
+        throw new Error("Source not found");
+    }
+
+    const updatedSource = await prisma.source.update({
+        where: {
+            id,
+        },
+        data: {
+            isActive: !source.isActive,
+        },
+    });
+
+    return updatedSource;
+}
+
 module.exports = {
     getAllSources,
     createSource,
     updatedSource,
+    toggleSource,
 };

@@ -26,4 +26,11 @@ router.patch(
     sourceController.updatedSource
 );
 
+router.patch(
+    "/sources/:id/toggle",
+    auth,
+    authorize("ADMIN"),
+    sourceController.toggleSource
+);
+
 module.exports = router;
