@@ -33,4 +33,11 @@ router.patch(
     sourceController.toggleSource
 );
 
+router.post(
+    "/sources/:id/test",
+    auth,
+    authorize("ADMIN"),
+    sourceController.testSourceFeed
+);
+
 module.exports = router;

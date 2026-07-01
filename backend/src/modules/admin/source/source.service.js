@@ -1,4 +1,6 @@
 const prisma = require("../../../config/prisma");
+const { isValidFeedUrl } = require("../../../utils/feedValidator");
+const { parseFeed } = require("../../../utils/rssParser");
 
 const getAllSources = async () => {
     const source = await prisma.source.findMany({
@@ -114,11 +116,43 @@ const toggleSource = async (id) => {
     });
 
     return updatedSource;
-}
+};
+
+const testSourceFeed = async(id) => {
+    const source = await prisma.source.findUnique({
+        where:{
+            id,
+        },
+    });
+
+    if(!source){
+        throw new Error("Source not found");
+    }
+
+    if(!source.baseUrl){
+        throw new Error("Source does not have a feed URL");
+    }
+
+    if(!isValidFeedUrl(source.baseUrl)){
+        throw new Error("Invalid RSS feed URL");
+    }
+
+    const feed = await parseFeed(source.baseUrl);
+
+    return {
+        reachable: true,
+        title: feed.title || "",
+        description: feed.description || "",
+        link: feed.link || "",
+        itemCount: feed.items?.length || 0,
+        lastBuildDate: feed.lastBuildDate || null,
+    };
+};
 
 module.exports = {
     getAllSources,
     createSource,
     updatedSource,
     toggleSource,
+    testSourceFeed,
 };

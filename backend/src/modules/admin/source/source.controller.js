@@ -62,11 +62,29 @@ const toggleSource = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
+
+const testSourceFeed = async (req, res, next) => {
+    try {
+        const result = await sourceService.testSourceFeed(
+            req.params.id
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "RSS feed is Valid",
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 module.exports = {
     getAllSources,
     createSource,
     updatedSource,
     toggleSource,
+    testSourceFeed,
 };
