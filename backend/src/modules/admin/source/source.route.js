@@ -40,4 +40,11 @@ router.post(
     sourceController.testSourceFeed
 );
 
+router.get(
+    "/sources/:id/stats",
+    auth,
+    authorize("ADMIN"),
+    sourceController.getSourceStats
+);
+
 module.exports = router;

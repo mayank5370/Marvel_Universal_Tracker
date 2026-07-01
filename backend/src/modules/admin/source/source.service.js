@@ -118,22 +118,22 @@ const toggleSource = async (id) => {
     return updatedSource;
 };
 
-const testSourceFeed = async(id) => {
+const testSourceFeed = async (id) => {
     const source = await prisma.source.findUnique({
-        where:{
+        where: {
             id,
         },
     });
 
-    if(!source){
+    if (!source) {
         throw new Error("Source not found");
     }
 
-    if(!source.baseUrl){
+    if (!source.baseUrl) {
         throw new Error("Source does not have a feed URL");
     }
 
-    if(!isValidFeedUrl(source.baseUrl)){
+    if (!isValidFeedUrl(source.baseUrl)) {
         throw new Error("Invalid RSS feed URL");
     }
 
@@ -149,10 +149,88 @@ const testSourceFeed = async(id) => {
     };
 };
 
+const getSourceStats = async (id) => {
+
+    const source = await prisma.source.findUnique({
+        where: {
+            id,
+        },
+    });
+
+    if (!source) {
+        throw new Error("Source not found");
+    }
+
+    const totalArticles = await prisma.contentItem.count({
+        where: {
+            sourceId: id,
+        },
+    });
+
+    const pendingArticles = await prisma.contentItem.count({
+        where: {
+            sourceId: id,
+            status: "PENDING",
+        },
+    });
+
+    const approvedArticles = await prisma.contentItem.count({
+        where: {
+            sourceId: id,
+            status: "APPROVED",
+        },
+    });
+
+    const rejectedArticles = await prisma.contentItem.count({
+        where: {
+            sourceId: id,
+            status: "REJECTED",
+        },
+    });
+
+    const latestArticle = await prisma.contentItem.findFirst({
+        where: {
+            sourceId: id,
+        },
+        orderBy: {
+            publishedAt: "desc",
+        },
+        select: {
+            title: true,
+            publishedAt: true,
+        },
+    });
+
+    const oldestArticle = await prisma.contentItem.findFirst({
+        where: {
+            sourceId: id,
+        },
+        orderBy: {
+            publishedAt: "asc",
+        },
+        select: {
+            title: true,
+            publishedAt: true,
+        },
+    });
+
+    return {
+        source: source.name,
+        isActive: source.isActive,
+        totalArticles,
+        pendingArticles,
+        approvedArticles,
+        rejectedArticles,
+        latestArticle,
+        oldestArticle,
+    };
+};
+
 module.exports = {
     getAllSources,
     createSource,
     updatedSource,
     toggleSource,
     testSourceFeed,
+    getSourceStats,
 };

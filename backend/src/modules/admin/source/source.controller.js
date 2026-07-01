@@ -81,10 +81,28 @@ const testSourceFeed = async (req, res, next) => {
     }
 };
 
+const getSourceStats = async (req, res, next) => {
+    try {
+
+        const result = await sourceService.getSourceStats(
+            req.params.id
+        );
+
+        return res.status(200).json({
+            success: true,
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getAllSources,
     createSource,
     updatedSource,
     toggleSource,
     testSourceFeed,
+    getSourceStats,
 };
