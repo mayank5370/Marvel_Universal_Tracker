@@ -4,6 +4,7 @@ const contentController = require("./content.controller");
 const auth = require("../../middlewares/auth");
 const authorize = require("../../middlewares/authorize");
 const validateRequest = require("../../middlewares/validateRequest");
+const { USER_ROLE } = require("../../utils/constants");
 
 const { createContentSchema } = require("./content.validatiion");
 
@@ -39,14 +40,14 @@ router.post(
 router.get(
     "/admin/content/pending",
     auth,
-    authorize("ADMIN"),
+    authorize(USER_ROLE.ADMIN),
     contentController.getPendingContent
 );
 
 router.get(
     "/admin/content",
     auth,
-    authorize("ADMIN"),
+    authorize(USER_ROLE.ADMIN),
     contentController.getAllContentAdmin
 );
 

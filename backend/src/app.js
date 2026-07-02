@@ -3,7 +3,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const env = require("./config/env");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
-const adminRoutes = require("./modules/auth/admin.route");
 const adminDashboardRoutes = require("./modules/admin/dashboard/dashboard.route");
 const contentRoutes = require("./modules/content/content.routes");
 const watchlistRoutes = require("./modules/watchlist/watchlist.routes");
@@ -33,8 +32,6 @@ const authRoutes = require("./modules/auth/auth.routes");
 app.use("/api/auth", authRoutes);
 
 app.use("/api/test", testRoutes);
-
-app.use("/api/admin", adminRoutes);
 
 app.use("/api/admin", adminDashboardRoutes);
 

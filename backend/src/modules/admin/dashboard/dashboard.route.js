@@ -2,13 +2,14 @@ const express = require("express");
 const auth = require("../../../middlewares/auth");
 const authorize = require("../../../middlewares/authorize");
 const adminController = require("./dashboard.controller");
+const { USER_ROLE } = require("../../../utils/constants");
 
 const router = express.Router();
 
 router.get(
     "/dashboard",
     auth,
-    authorize("ADMIN"),
+    authorize(USER_ROLE.ADMIN),
     adminController.getDashboardStats
 );
 
