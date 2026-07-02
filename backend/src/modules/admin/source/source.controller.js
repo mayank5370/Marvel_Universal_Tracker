@@ -68,9 +68,9 @@ const toggleSource = asyncHandler(async (req, res) => {
 
 });
 
-const testSource = asyncHandler(async (req, res) => {
+const testSourceFeed = asyncHandler(async (req, res) => {
 
-    const result = await sourceService.testSource(
+    const result = await sourceService.testSourceFeed(
         req.params.id
     );
 
