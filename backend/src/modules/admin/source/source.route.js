@@ -2,6 +2,9 @@ const express = require("express");
 const auth = require("../../../middlewares/auth");
 const authorize = require("../../../middlewares/authorize");
 const sourceController = require("./source.controller");
+const validateRequest = require("../../../middlewares/validateRequest");
+
+const { createSourceSchema, updateSourceSchema, } = require("../../../validations/source.validation");
 
 const router = express.Router();
 
@@ -16,6 +19,7 @@ router.post(
     "/sources",
     auth,
     authorize("ADMIN"),
+    validateRequest(createSourceSchema),
     sourceController.createSource
 );
 
@@ -23,6 +27,7 @@ router.patch(
     "/sources/:id",
     auth,
     authorize("ADMIN"),
+    validateRequest(updateSourceSchema),
     sourceController.updatedSource
 );
 

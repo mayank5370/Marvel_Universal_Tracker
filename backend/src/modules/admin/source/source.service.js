@@ -16,13 +16,6 @@ const getAllSources = async () => {
 const createSource = async (payload) => {
     let { name, baseUrl } = payload;
 
-    if (!name || !baseUrl) {
-        throw new ApiError(
-            400,
-            "Name and BaseUrl are required"
-        );
-    }
-
     name = name.trim();
     baseUrl = baseUrl.trim();
 
@@ -55,13 +48,6 @@ const createSource = async (payload) => {
 
 const updatedSource = async (id, payload) => {
     let { name, baseUrl } = payload;
-
-    if (!name || !baseUrl) {
-        throw new ApiError(
-            400,
-            "Name and BaseUrl required"
-        );
-    }
 
     name = name.trim();
     baseUrl = baseUrl.trim();
