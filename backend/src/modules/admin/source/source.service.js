@@ -1,6 +1,7 @@
 const prisma = require("../../../config/prisma");
 const { isValidFeedUrl } = require("../../../utils/feedValidator");
 const { parseFeed } = require("../../../utils/rssParser");
+const ApiError = require("../../../utils/ApiError");
 
 const getAllSources = async () => {
     const source = await prisma.source.findMany({
@@ -16,7 +17,10 @@ const createSource = async (payload) => {
     let { name, baseUrl } = payload;
 
     if (!name || !baseUrl) {
-        throw new Error("Name and BaseUrl are required");
+        throw new ApiError(
+            400,
+            "Name and BaseUrl are required"
+        );
     }
 
     name = name.trim();
@@ -32,7 +36,10 @@ const createSource = async (payload) => {
     });
 
     if (existingSource) {
-        throw new Error("Source already exists");
+        throw new ApiError(
+            409,
+            "Source already exists"
+        );
     }
 
     const source = await prisma.source.create({
@@ -50,7 +57,10 @@ const updatedSource = async (id, payload) => {
     let { name, baseUrl } = payload;
 
     if (!name || !baseUrl) {
-        throw new Error("Name and BaseUrl required");
+        throw new ApiError(
+            400,
+            "Name and BaseUrl required"
+        );
     }
 
     name = name.trim();
@@ -63,7 +73,10 @@ const updatedSource = async (id, payload) => {
     });
 
     if (!source) {
-        throw new Error("Source not found");
+        throw new ApiError(
+            404,
+            "Source not found"
+        );
     }
 
     const duplicate = await prisma.source.findFirst({
@@ -103,7 +116,10 @@ const toggleSource = async (id) => {
     });
 
     if (!source) {
-        throw new Error("Source not found");
+        throw new ApiError(
+            404,
+            "Source not found"
+        );
     }
 
     const updatedSource = await prisma.source.update({
@@ -126,7 +142,10 @@ const testSourceFeed = async (id) => {
     });
 
     if (!source) {
-        throw new Error("Source not found");
+        throw new ApiError(
+            404,
+            "Source not found"
+        );
     }
 
     if (!source.baseUrl) {
@@ -158,7 +177,10 @@ const getSourceStats = async (id) => {
     });
 
     if (!source) {
-        throw new Error("Source not found");
+        throw new ApiError(
+            404,
+            "Source not found"
+        );
     }
 
     const totalArticles = await prisma.contentItem.count({

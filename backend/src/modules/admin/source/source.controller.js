@@ -1,5 +1,7 @@
 const { success } = require("zod");
 const sourceService = require("./source.service");
+const ApiResponse = require("../../../utils/ApiResponse");
+const asyncHandler = require("../../../utils/asyncHandler");
 
 
 const getAllSources = async (req, res, next) => {
@@ -16,20 +18,19 @@ const getAllSources = async (req, res, next) => {
     }
 };
 
-const createSource = async (req, res, next) => {
-    try {
-        const result = await sourceService.createSource(req.body);
+const createSource = asyncHandler(async (req, res) => {
 
-        return res.status(201).json({
-            success: true,
-            message: "Source created successfully",
-            data: result,
-        });
+    const result = await sourceService.createSource(req.body);
 
-    } catch (error) {
-        next(error);
-    }
-};
+    return res.status(201).json(
+        new ApiResponse(
+            201,
+            "Source created successfully",
+            result
+        )
+    );
+
+});
 
 const updatedSource = async (req, res, next) => {
     try {
