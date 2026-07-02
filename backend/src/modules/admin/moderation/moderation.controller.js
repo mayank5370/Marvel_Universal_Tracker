@@ -1,72 +1,72 @@
 const { success } = require("zod");
 const moderationService = require("./moderation.service");
+const ApiResponse = require("../../../utils/ApiResponse");
+const asyncHandler = require("../../../utils/asyncHandler");
 
-const getPendingContent = async (req, res, next) => {
-    try {
-        const result = await moderationService.getPendingContent();
+const getPendingContent = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
-            success: true,
-            count: result.length,
-            data: result,
-        });
+    const result = await moderationService.getPendingContent();
 
-    } catch (error) {
-        next(error);
-    }
-};
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Pending content fetched successfully",
+            {
+                count: result.length,
+                content: result,
+            }
+        )
+    );
 
-const getContentDetails = async (req, res, next) => {
-    try {
+});
 
-        const result = await moderationService.getContentDetails(
-            req.params.id
-        );
+const getContentDetails = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
-            success: true,
-            data: result,
-        });
+    const result = await moderationService.getContentDetails(
+        req.params.id
+    );
 
-    } catch (error) {
-        next(error);
-    }
-}
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Content details fetched successfully",
+            result
+        )
+    );
 
-const approvedContent = async (req, res, next) => {
-    try {
-        const result = await moderationService.approvedContent(
-            req.params.id
-        );
+});
 
-        return res.status(200).json({
-            success: true,
-            message: "Content approved successfully",
-            data: result,
-        });
+const approvedContent = asyncHandler(async (req, res) => {
 
-    } catch (error) {
-        next(error);
-    }
-};
+    const result = await moderationService.approvedContent(
+        req.params.id
+    );
 
-const rejectContent = async (req, res, next) => {
-    try {
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Content approved successfully",
+            result
+        )
+    );
 
-        const result = await moderationService.rejectContent(
-            req.params.id
-        );
+}); 
 
-        return res.status(200).json({
-            success: true,
-            message: "Content rejected successfully",
-            data: result,
-        });
+const rejectContent = asyncHandler(async (req, res) => {
 
-    } catch (error) {
-        next(error);
-    }
-};
+    const result = await moderationService.rejectContent(
+        req.params.id
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Content rejected successfully",
+            result
+        )
+    );
+
+});
 
 
 module.exports = {
