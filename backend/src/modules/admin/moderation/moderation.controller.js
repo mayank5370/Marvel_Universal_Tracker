@@ -33,7 +33,25 @@ const getContentDetails = async (req, res, next) => {
     }
 }
 
+const approvedContent = async (req, res, next) => {
+    try {
+        const result = await moderationService.approvedContent(
+            req.params.id
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Content approved successfully",
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getPendingContent,
     getContentDetails,
+    approvedContent,
 };

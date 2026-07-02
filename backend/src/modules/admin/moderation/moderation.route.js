@@ -21,4 +21,11 @@ router.get(
     moderationController.getContentDetails
 );
 
+router.patch(
+    "/content/:id/approve",
+    auth,
+    authorize("ADMIN"),
+    moderationController.approvedContent
+);
+
 module.exports = router;

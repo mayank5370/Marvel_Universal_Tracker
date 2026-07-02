@@ -58,9 +58,41 @@ const getContentDetails = async (id) => {
     return content;
 };
 
+const approvedContent = async (id) => {
+    const content = await prisma.contentItem.findUnique({
+        where: {
+            id,
+        },
+    });
 
+    if (!content) {
+        throw new Error("Content not found");
+    }
+
+    if (content.status !== "PENDING") {
+        throw new Error(
+            `Cannot approve content with status ${content.status}`
+        );
+    }
+
+    const updateContent = await prisma.contentItem.update({
+        where: { id },
+        data: {
+            status: "APPROVED",
+        },
+        select: {
+            id: true,
+            title: true,
+            status: true,
+            updatedAt: true,
+        },
+    });
+
+    return updateContent;
+}
 
 module.exports = {
     getPendingContent,
     getContentDetails,
+    approvedContent,
 };
