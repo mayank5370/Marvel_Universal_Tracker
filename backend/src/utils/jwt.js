@@ -11,7 +11,7 @@ const generateAccessToken = (payload) => {
     );
 };
 
-const generateReferenceToken = (payload) => {
+const generateRefreshToken = (payload) => {
     return jwt.sign(
         payload,
         env.jwtRefreshSecret,
@@ -40,7 +40,7 @@ const verifyRefreshToekn = (token) => {
 
 module.exports = {
     generateAccessToken,
-    generateReferenceToken,
+    generateRefreshToken,
     verifyAccessToken,
     verifyRefreshToekn,
 };

@@ -1,10 +1,10 @@
 const bcrypt = require("bcrypt");
 const prisma = require("../../config/prisma");
-const AppError = require("../../utils/AppErrror");
-const { generateAccessToken, generateReferenceToken } = require("../../utils/jwt");
+const ApiError = require("../../utils/ApiError");
+const { generateAccessToken, generateRefreshToken, } = require("../../utils/jwt");
 
 
-const registerUser = async (payload) => {
+const register = async (payload) => {
     const { email, password } = payload;
     const existingUser = await prisma.user.findUnique({
         where: {
@@ -13,7 +13,10 @@ const registerUser = async (payload) => {
     });
 
     if (existingUser) {
-        throw new Error("User alreay exists");
+        throw new ApiError(
+            409,
+            "User already exists"
+        );
     }
 
     const passwordHash = await bcrypt.hash(password, 12);
@@ -35,7 +38,7 @@ const registerUser = async (payload) => {
 };
 
 
-const loginUser = async (payload) => {
+const login = async (payload) => {
     const { email, password } = payload;
     const user = await prisma.user.findUnique({
         where: {
@@ -44,9 +47,9 @@ const loginUser = async (payload) => {
     });
 
     if (!user) {
-        throw new AppError(
-            "Invalid Credentials",
-            401
+        throw new ApiError(
+            401,
+            "Invalid credentials"
         );
     }
 
@@ -56,9 +59,9 @@ const loginUser = async (payload) => {
     );
 
     if (!passwordMatched) {
-        throw new AppError(
-            "Invalid Credentials",
-            401
+        throw new ApiError(
+            401,
+            "Invalid credentials"
         );
     }
 
@@ -69,7 +72,7 @@ const loginUser = async (payload) => {
     };
 
     const accessToken = generateAccessToken(jwtPayload);
-    const refreshToken = generateReferenceToken(jwtPayload);
+    const refreshToken = generateRefreshToken(jwtPayload);
 
     return {
         accessToken,
@@ -84,6 +87,6 @@ const loginUser = async (payload) => {
 };
 
 module.exports = {
-    registerUser,
-    loginUser,
+    register,
+    login,
 };

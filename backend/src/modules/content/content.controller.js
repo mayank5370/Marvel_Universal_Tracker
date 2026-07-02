@@ -1,181 +1,127 @@
+const ApiResponse = require("../../utils/ApiResponse");
+const asyncHandler = require("../../utils/asyncHandler");
 const contentService = require("./content.service");
 
-const checkDuplicate = async(req, res, next) => {
-    try{
-        const {sourceUrl} = req.query;
+const checkDuplicate = asyncHandler(async (req, res) => {
 
-        const result = await contentService.checkDuplicate(sourceUrl);
-        
-        return res.status(200).json({
-            success: true,
-            data: result,
-        });
-    }catch(error){
-        next(error);
-    }
-};
+    const { sourceUrl } = req.query;
 
-const ingestContent = async (req, res, next) => {
-    try {
-        const result = await contentService.createContent(
-            req.body
-        );
+    const result = await contentService.checkDuplicate(sourceUrl);
 
-        return res.status(201).json({
-            success: true,
-            message: "Content Ingested",
-            data: result,
-        });
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Duplicate check completed",
+            result
+        )
+    );
 
-    } catch (error) {
-        next(error);
-    }
-};
+});
 
-const getFeed = async (req, res, next) => {
-    try {
-        const page = Number(req.query.page) || 1;
+const ingestContent = asyncHandler(async (req, res) => {
 
-        const limit = Number(req.query.limit) || 10;
+    const result = await contentService.createContent(req.body);
 
-        const result = await contentService.getFeed(
-            page,
-            limit
-        );
+    return res.status(201).json(
+        new ApiResponse(
+            201,
+            "Content ingested successfully",
+            result
+        )
+    );
 
-        return res.status(200).json({
-            success: true,
-            ...result,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+});
 
-const getContentById = async (req, res, next) => {
-    try {
-        const result = await contentService.getContentById(
-            req.params.id
-        );
+const getFeed = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
-            success: true,
-            data: result,
-        });
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-    } catch (error) {
-        next(error);
-    }
-};
+    const result = await contentService.getFeed(page, limit);
 
-const searchContent = async (req, res, next) => {
-    try {
-        const {
-            q,
-            type,
-            spoilerRisk,
-            sort,
-        } = req.query;
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Content feed fetched successfully",
+            result.data,
+            result.pagination
+        )
+    );
 
-        const result = await contentService.searchContent({
-            q,
-            type,
-            spoilerRisk,
-            sort,
-        });
+});
+
+const getContentById = asyncHandler(async (req, res) => {
+
+    const result = await contentService.getContentById(req.params.id);
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Content fetched successfully",
+            result
+        )
+    );
+
+});
+
+const searchContent = asyncHandler(async (req, res) => {
+
+    const result = await contentService.searchContent(req.query);
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Search completed successfully",
+            result,
+            {
+                count: result.length,
+            }
+        )
+    );
+
+});
 
 
-        return res.status(200).json({
-            success: true,
-            count: result.length,
-            data: result,
-        });
+const getPendingContent = asyncHandler(async (req, res) => {
 
-    } catch (error) {
-        next(error);
-    }
+    const result = await contentService.getPendingContent();
 
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Pending content fetched successfully",
+            result,
+            {
+                count: result.length,
+            }
+        )
+    );
+});
 
-};
+const getAllContentAdmin = asyncHandler(async (req, res) => {
 
-const approveContent = async (req, res, next) => {
-    try {
-        const result = await contentService.approveContent(
-            req.params.id
-        );
+    const result = await contentService.getAllContentAdmin();
 
-        return res.status(200).json({
-            success: true,
-            message: "Content Approved",
-            data: result,
-        });
-
-    } catch (error) {
-        next(error);
-    }
-};
-
-const rejectContent = async (req, res, next) => {
-    try {
-        const result = await contentService.rejectContent(
-            req.params.id
-        );
-
-        return res.status(200).json({
-            success: true,
-            message: "Content Rejected",
-            data: result,
-        });
-
-    } catch (error) {
-        next(error);
-    }
-};
-
-const getPendingContent = async (req, res, next) => {
-    try {
-
-        const result =
-            await contentService.getPendingContent();
-
-        return res.status(200).json({
-            success: true,
-            count: result.length,
-            data: result,
-        });
-
-    } catch (error) {
-        next(error);
-    }
-};
-
-const getAllContentAdmin = async (req, res, next) => {
-    try {
-
-        const result =
-            await contentService.getAllContentAdmin();
-
-        return res.status(200).json({
-            success: true,
-            count: result.length,
-            data: result,
-        });
-
-    } catch (error) {
-        next(error);
-    }
-};
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "All content fetched successfully",
+            result,
+            {
+                count: result.length,
+            }
+        )
+    );
+});
 
 
 
 module.exports = {
-    checkDuplicate,     
+    checkDuplicate,
     ingestContent,
     getFeed,
     getContentById,
     searchContent,
-    approveContent,
-    rejectContent,
     getPendingContent,
     getAllContentAdmin,
 };

@@ -1,4 +1,5 @@
 const prisma = require("../../config/prisma");
+const ApiError = require("../../utils/ApiError");
 
 const addToWatchlist = async (
     userId,
@@ -63,10 +64,13 @@ const updateWatchlistItem = async (userId, watchlistId, watched) => {
     });
 
     if (!existing) {
-        throw new Error("Watchlist Item Not Found");
+        throw new ApiError(
+            409,
+            "Content already exists in watchlist"
+        );
     }
 
-    const update = await prisma.watchlistItem.update({
+    const updateItem = await prisma.watchlistItem.update({
         where: {
             id: watchlistId,
         },
@@ -75,7 +79,7 @@ const updateWatchlistItem = async (userId, watchlistId, watched) => {
         },
     });
 
-    return update
+    return updateItem;
 };
 
 const removeWatchlistItem = async (userId, watchlistId) => {
@@ -87,7 +91,10 @@ const removeWatchlistItem = async (userId, watchlistId) => {
     });
 
     if (!existing) {
-        throw new Error("Watchlist Item not Found");
+        throw new ApiError(
+            404,
+            "Watchlist item not found"
+        );
     }
 
     await prisma.watchlistItem.delete({
@@ -95,7 +102,10 @@ const removeWatchlistItem = async (userId, watchlistId) => {
             id: watchlistId,
         },
     });
-    return true;
+
+    return {
+        deleted: true,
+    };
 };
 
 

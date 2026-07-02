@@ -1,7 +1,12 @@
 const express = require("express");
 const contentController = require("./content.controller");
+
 const auth = require("../../middlewares/auth");
 const authorize = require("../../middlewares/authorize");
+const validateRequest = require("../../middlewares/validateRequest");
+
+const { createContentSchema } = require("./content.validatiion");
+
 const router = express.Router();
 
 
@@ -26,22 +31,9 @@ router.get(
 );
 
 router.post(
-    "/ingest",
+    "/content/ingest",
+    validateRequest(createContentSchema),
     contentController.ingestContent
-);
-
-router.patch(
-    "/admin/content/:id/approve",
-    auth,
-    authorize("ADMIN"),
-    contentController.approveContent
-);
-
-router.patch(
-    "/admin/content/:id/reject",
-    auth,
-    authorize("ADMIN"),
-    contentController.rejectContent
 );
 
 router.get(

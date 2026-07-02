@@ -4,13 +4,21 @@ const auth = require("../../middlewares/auth");
 
 const watchlistController = require("./watchlist.controller");
 
+const validateRequest = require("../../middlewares/validateRequest");
+
+const {
+    addWatchlistSchema,
+    updateWatchlistSchema,
+} = require("./watchist.validation");
 const router = express.Router();
 
 router.post(
     "/watchlist",
     auth,
+    validateRequest(addWatchlistSchema),
     watchlistController.addToWatchlist
 );
+
 
 router.get(
     "/watchlist",
@@ -21,6 +29,7 @@ router.get(
 router.patch(
     "/watchlist/:id",
     auth,
+    validateRequest(updateWatchlistSchema),
     watchlistController.updateWatchlistItem
 );
 

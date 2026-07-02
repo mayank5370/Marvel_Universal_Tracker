@@ -1,12 +1,7 @@
 const prisma = require("../../config/prisma");
+const ApiError = require("../../utils/ApiError");
 
-const slugify = (text) => {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-");
-};
+const slugify = require("../../utils/slugify");
 
 const createContent = async (payload) => {
   const existingContent =
@@ -17,10 +12,10 @@ const createContent = async (payload) => {
     });
 
   if (existingContent) {
-    return {
-      alreadyExists: true,
-      content: existingContent,
-    };
+    throw new ApiError(
+      409,
+      "Content already exists"
+    );
   }
 
   const result = await prisma.$transaction(
@@ -67,7 +62,7 @@ const createContent = async (payload) => {
 
       return {
         source,
-        contentItem,
+        content: contentItem,
         aiEnrichment,
       };
     }
@@ -168,7 +163,10 @@ const getContentById = async (id) => {
   });
 
   if (!content) {
-    throw new Error("Content Not Found!");
+    throw new ApiError(
+      404,
+      "Content not found"
+    );
   }
 
   return content;
@@ -259,38 +257,6 @@ const searchContent = async ({
   return results;
 };
 
-const approveContent = async (contentId) => {
-  const content = await prisma.contentItem.update({
-
-    where: {
-      id: contentId,
-    },
-
-    data: {
-      status: "APPROVED",
-    },
-  });
-
-  return content;
-
-};
-
-const rejectContent = async (contentId) => {
-  const content = await prisma.contentItem.update({
-
-    where: {
-      id: contentId,
-    },
-
-    data: {
-      status: "REJECTED",
-    },
-  });
-
-  return content;
-
-};
-
 const getPendingContent = async () => {
 
   const contents =
@@ -337,8 +303,6 @@ module.exports = {
   getFeed,
   getContentById,
   searchContent,
-  approveContent,
-  rejectContent,
   getPendingContent,
   getAllContentAdmin,
 };

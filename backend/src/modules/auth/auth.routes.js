@@ -1,15 +1,19 @@
 const express = require("express");
 const authController = require("./auth.controller");
 const auth = require("../../middlewares/auth");
+const validateRequest = require("../../middlewares/validateRequest");
+const { registerSchema, loginSchema, } = require("./auth.validation");
 const router = express.Router();
 
 router.post(
     "/register",
+    validateRequest(registerSchema),
     authController.register
 );
 
 router.post(
     "/login",
+    validateRequest(loginSchema),
     authController.login
 );
 

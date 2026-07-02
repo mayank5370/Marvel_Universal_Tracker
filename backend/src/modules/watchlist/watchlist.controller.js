@@ -1,74 +1,78 @@
-const { success } = require("zod");
 const watchlistService = require("./watchlist.service");
 
-const addToWatchlist = async (req, res, next) => {
-    try {
-        const result = await watchlistService.addToWatchlist(
-            req.user.userId,
-            req.body.contentItemId
-        );
+const ApiResponse = require("../../utils/ApiResponse");
+const asyncHandler = require("../../utils/asyncHandler");
 
-        return res.status(200).json({
-            success: true,
-            message: "Added to Watch-List",
-            data: result,
-        });
 
-    } catch (error) {
-        next(error);
-    }
-};
+const addToWatchlist = asyncHandler(async (req, res) => {
 
-const getMyWatchList = async (req, res, next) => {
-    try {
-        const result = await watchlistService.getMyWatchList(
-            req.user.userId
-        );
+    const result = await watchlistService.addToWatchlist(
+        req.user.userId,
+        req.body.contentItemId
+    );
 
-        return res.status(200).json({
-            success: true,
-            count: result.length,
-            data: result,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+    return res.status(201).json(
+        new ApiResponse(
+            201,
+            "Content added to watchlist successfully",
+            result
+        )
+    );
 
-const updateWatchlistItem = async (req, res, next) => {
-    try {
-        const result = await watchlistService.updateWatchlistItem(
-            req.user.userId,
-            req.params.id,
-            req.body.watched
-        );
+});
 
-        return res.status(200).json({
-            success: true,
-            message: "Watchlist Updated",
-            data: result,
-        });
+const getMyWatchList = asyncHandler(async (req, res) => {
 
-    } catch (error) {
-        next(error);
-    }
-};
+    const result = await watchlistService.getMyWatchList(
+        req.user.userId
+    );
 
-const removeWatchlistItem = async (req, res, next) => {
-    try {
-        await watchlistService.removeWatchlistItem(
-            req.user.userId,
-            req.params.id
-        );
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Watchlist fetched successfully",
+            result,
+            {
+                count: result.length,
+            }
+        )
+    );
 
-        return res.status(200).json({
-            success: true,
-            message: "Remove from Watchlist",
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+});
+
+const updateWatchlistItem = asyncHandler(async (req, res) => {
+
+    const result = await watchlistService.updateWatchlistItem(
+        req.user.userId,
+        req.params.id,
+        req.body.watched
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Watchlist updated successfully",
+            result
+        )
+    );
+
+});
+
+const removeWatchlistItem = asyncHandler(async (req, res) => {
+
+    await watchlistService.removeWatchlistItem(
+        req.user.userId,
+        req.params.id
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Content removed from watchlist successfully"
+        )
+    );
+
+});
 
 module.exports = {
     addToWatchlist,

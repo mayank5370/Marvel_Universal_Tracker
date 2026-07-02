@@ -4,7 +4,7 @@ const authorize = require("../../../middlewares/authorize");
 const sourceController = require("./source.controller");
 const validateRequest = require("../../../middlewares/validateRequest");
 
-const { createSourceSchema, updateSourceSchema, } = require("../../../validations/source.validation");
+const { createSourceSchema, updateSourceSchema, } = require("./source.validation");
 
 const router = express.Router();
 
