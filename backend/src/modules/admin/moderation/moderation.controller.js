@@ -50,8 +50,28 @@ const approvedContent = async (req, res, next) => {
     }
 };
 
+const rejectContent = async (req, res, next) => {
+    try {
+
+        const result = await moderationService.rejectContent(
+            req.params.id
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Content rejected successfully",
+            data: result,
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 module.exports = {
     getPendingContent,
     getContentDetails,
     approvedContent,
+    rejectContent,
 };

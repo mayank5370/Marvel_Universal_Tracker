@@ -91,8 +91,45 @@ const approvedContent = async (id) => {
     return updateContent;
 }
 
+const rejectContent = async (id) => {
+
+    const content = await prisma.contentItem.findUnique({
+        where: {
+            id,
+        },
+    });
+
+    if (!content) {
+        throw new Error("Content not found");
+    }
+
+    if (content.status !== "PENDING") {
+        throw new Error(
+            `Cannot reject content with status ${content.status}`
+        );
+    }
+
+    const updatedContent = await prisma.contentItem.update({
+        where: {
+            id,
+        },
+        data: {
+            status: "REJECTED",
+        },
+        select: {
+            id: true,
+            title: true,
+            status: true,
+            updatedAt: true,
+        },
+    });
+
+    return updatedContent;
+};
+
 module.exports = {
     getPendingContent,
     getContentDetails,
     approvedContent,
+    rejectContent,
 };

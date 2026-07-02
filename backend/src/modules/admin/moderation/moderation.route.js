@@ -28,4 +28,12 @@ router.patch(
     moderationController.approvedContent
 );
 
+router.patch(
+    "/content/:id/reject",
+    auth,
+    authorize("ADMIN"),
+    moderationController.rejectContent
+);
+
+
 module.exports = router;
