@@ -4,19 +4,22 @@ const ApiResponse = require("../../../utils/ApiResponse");
 const asyncHandler = require("../../../utils/asyncHandler");
 
 
-const getAllSources = async (req, res, next) => {
-    try {
-        const result = await sourceService.getAllSources();
+const getAllSources = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
-            success: true,
-            count: result.length,
-            data: result,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+    const result = await sourceService.getAllSources();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Sources fetched successfully",
+            {
+                count: result.length,
+                sources: result,
+            }
+        )
+    );
+
+});
 
 const createSource = asyncHandler(async (req, res) => {
 
@@ -32,72 +35,70 @@ const createSource = asyncHandler(async (req, res) => {
 
 });
 
-const updatedSource = async (req, res, next) => {
-    try {
-        const result = await sourceService.updatedSource(
-            req.params.id,
-            req.body
-        );
+const updatedSource = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
-            success: true,
-            message: "Source updated successfully",
-            data: result,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+    const result = await sourceService.updatedSource(
+        req.params.id,
+        req.body
+    );
 
-const toggleSource = async (req, res, next) => {
-    try {
-        const result = await sourceService.toggleSource(
-            req.params.id
-        );
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Source updated successfully",
+            result
+        )
+    );
 
-        return res.status(200).json({
-            success: true,
-            message: "Source status updated successfully",
-            data: result,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+});
 
-const testSourceFeed = async (req, res, next) => {
-    try {
-        const result = await sourceService.testSourceFeed(
-            req.params.id
-        );
+const toggleSource = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
-            success: true,
-            message: "RSS feed is Valid",
-            data: result,
-        });
+    const result = await sourceService.toggleSource(
+        req.params.id
+    );
 
-    } catch (error) {
-        next(error);
-    }
-};
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Source status updated successfully",
+            result
+        )
+    );
 
-const getSourceStats = async (req, res, next) => {
-    try {
+});
 
-        const result = await sourceService.getSourceStats(
-            req.params.id
-        );
+const testSource = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
-            success: true,
-            data: result,
-        });
+    const result = await sourceService.testSource(
+        req.params.id
+    );
 
-    } catch (error) {
-        next(error);
-    }
-};
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "RSS feed validated successfully",
+            result
+        )
+    );
+
+});
+
+const getSourceStats = asyncHandler(async (req, res) => {
+
+    const result = await sourceService.getSourceStats(
+        req.params.id
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Source statistics fetched successfully",
+            result
+        )
+    );
+
+});
 
 module.exports = {
     getAllSources,
