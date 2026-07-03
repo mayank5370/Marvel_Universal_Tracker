@@ -1,4 +1,5 @@
 const prisma = require("../../../config/prisma");
+const { CONTENT_STATUS } = require("../../../utils/constants");
 
 const getDashboardStats = async () => {
 
@@ -6,19 +7,19 @@ const getDashboardStats = async () => {
 
     const pendingContent = await prisma.contentItem.count({
         where: {
-            status: "PENDING",
+            status: CONTENT_STATUS.PENDING,
         },
     });
 
     const approvedContent = await prisma.contentItem.count({
         where: {
-            status: "APPROVED",
+            status: CONTENT_STATUS.APPROVED,
         },
     });
 
     const rejectedContent = await prisma.contentItem.count({
         where: {
-            status: "REJECTED",
+            status: CONTENT_STATUS.REJECTED,
         },
     });
 

@@ -1,4 +1,8 @@
 const { z } = require("zod");
+const {
+    CONTENT_TYPE,
+    SPOILER_RISK,
+} = require("../../utils/constants");
 
 const createContentSchema = z.object({
     title: z.string().min(1),
@@ -13,24 +17,18 @@ const createContentSchema = z.object({
 
     publishedAt: z.string(),
 
-    contentType: z.enum([
-        "MOVIE",
-        "SERIES",
-        "COMIC",
-        "GAME",
-        "OTHER",
-    ]),
+    contentType: z.enum(
+        Object.values(CONTENT_TYPE)
+    ),
 
     ai: z.object({
         tldr: z.string(),
 
         importanceScore: z.number().min(1).max(10),
 
-        spoilerRisk: z.enum([
-            "LOW",
-            "MEDIUM",
-            "HIGH",
-        ]),
+        spoilerRisk: z.enum(
+            Object.values(SPOILER_RISK)
+        ),
 
         tags: z.array(z.string()),
 
