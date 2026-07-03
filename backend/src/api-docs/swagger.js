@@ -1,5 +1,11 @@
-const { schemas, responses, paths, } = require("./index");
-
+const {
+    schemas,
+    responses,
+    parameters,
+    securitySchemes,
+    tags,
+    paths,
+} = require("./index");
 
 module.exports = {
     openapi: "3.0.3",
@@ -20,43 +26,18 @@ module.exports = {
         },
     ],
 
-    tags: [
-        {
-            name: "Authentication",
-            description: "Authentication APIs",
-        },
-        {
-            name: "Dashboard",
-            description: "Dashboard APIs",
-        },
-        {
-            name: "Sources",
-            description: "RSS Source Management",
-        },
-        {
-            name: "Content",
-            description: "Marvel Content APIs",
-        },
-        {
-            name: "Moderation",
-            description: "Content Moderation",
-        },
-        {
-            name: "Watchlist",
-            description: "User Watchlist",
-        },
-    ],
+    tags,
 
     components: {
-        securitySchemes: {
-            bearerAuth: {
-                type: "http",
-                scheme: "bearer",
-                bearerFormat: "JWT",
-            },
-        },
+
+        securitySchemes,
 
         schemas,
+
+        responses,
+
+        parameters,
+
     },
 
     security: [
