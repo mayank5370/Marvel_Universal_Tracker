@@ -7,7 +7,7 @@ const {
     paths,
 } = require("./index");
 
-module.exports = {
+const swaggerSpec = {
     openapi: "3.0.3",
 
     info: {
@@ -15,8 +15,22 @@ module.exports = {
         version: "1.0.0",
         description: "AI Powered Marvel Universe Tracker",
         contact: {
-            name: "Mayank Singh Rai",
+            name: "Mayank Singh",
+            url: "https://github.com/mayank5370",
+            email: "mayankp5370@gmail.com",
         },
+        license: {
+            name: "MIT",
+        },
+    },
+
+    externalDocs: {
+        description: "MarvelVerse Documentation",
+        url: "https://github.com/mayank5370/Marvel_Universal_Tracker",
+    },
+
+    logo: {
+        url: "...",
     },
 
     servers: [
@@ -25,6 +39,7 @@ module.exports = {
             description: "Development Server",
         },
     ],
+
 
     tags,
 
@@ -48,3 +63,5 @@ module.exports = {
 
     paths,
 };
+
+module.exports = Object.freeze(swaggerSpec);

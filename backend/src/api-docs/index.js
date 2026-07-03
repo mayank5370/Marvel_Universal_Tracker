@@ -1,39 +1,15 @@
-const commonSchemas = require("./schemas/common.schema");
-const authSchemas = require("./schemas/auth.schema");
-const commonResponses = require("./responses/common.response");
-const authPaths = require("./paths/auth.path");
-const bearerSecurity = require("./security/bearer.security");
+const schemas = require("./components/schemas");
+const responses = require("./components/responses");
+const parameters = require("./components/parameters");
+const securitySchemes = require("./components/security");
 const tags = require("./tags/tags");
-const parameters = require("./parameters/common.parameters");
-const apiResponseSchemas = require("./schemas/api-response.schema");
-
+const paths = require("./paths");
 
 module.exports = {
-
-    schemas: {
-
-        ...commonSchemas,
-
-        ...apiResponseSchemas,
-
-        ...authSchemas,
-
-    },
-
-    responses: {
-        ...commonResponses,
-    },
-
+    schemas,
+    responses,
     parameters,
-
-    securitySchemes: {
-        ...bearerSecurity,
-    },
-
+    securitySchemes,
     tags,
-
-    paths: {
-        ...authPaths,
-    },
-
+    paths,
 };
