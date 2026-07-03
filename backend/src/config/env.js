@@ -1,25 +1,33 @@
 require("dotenv").config();
 
-const requiredEnvVariables = [
+const REQUIRED_ENV_VARS = [
   "PORT",
   "DATABASE_URL",
+
   "JWT_ACCESS_SECRET",
   "JWT_REFRESH_SECRET",
+
+  "JWT_ACCESS_EXPIRES_IN",
+  "JWT_REFRESH_EXPIRES_IN",
+
+  "CLIENT_URL",
+
   "INGEST_API_KEY",
 ];
 
-requiredEnvVariables.forEach((variable) => {
+REQUIRED_ENV_VARS.forEach((variable) => {
   if (!process.env[variable]) {
     throw new Error(
-      `Missing required environment variable: ${variable}`
+      `Missing required environment variable: ${variable}\nPlease check your .env file.`
     );
   }
 });
 
-module.exports = {
-  nodeEnv: process.env.NODE_ENV,
+module.exports = Object.freeze({
 
-  port: process.env.PORT,
+  nodeEnv: process.env.NODE_ENV || "development",
+
+  port: Number(process.env.PORT),
 
   databaseUrl: process.env.DATABASE_URL,
 
@@ -38,4 +46,4 @@ module.exports = {
   redisHost: process.env.REDIS_HOST,
 
   redisPort: process.env.REDIS_PORT,
-};
+});
