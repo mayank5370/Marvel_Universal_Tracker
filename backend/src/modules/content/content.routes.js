@@ -6,7 +6,7 @@ const authorize = require("../../middlewares/authorize");
 const validateRequest = require("../../middlewares/validateRequest");
 const { USER_ROLE } = require("../../utils/constants");
 
-const { createContentSchema } = require("./content.validatiion");
+const { createContentSchema } = require("./content.validation");
 
 const router = express.Router();
 

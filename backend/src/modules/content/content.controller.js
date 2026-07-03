@@ -50,6 +50,7 @@ const getFeed = asyncHandler(async (req, res) => {
 
 });
 
+
 const getContentById = asyncHandler(async (req, res) => {
 
     const result = await contentService.getContentById(req.params.id);

@@ -1,4 +1,6 @@
 const prisma = require("../../../config/prisma");
+const ApiError = require("../../../utils/ApiError");
+const { CONTENT_STATUS } = require("../../../utils/constants");
 
 const getPendingContent = async () => {
 
@@ -78,7 +80,7 @@ const approvedContent = async (id) => {
     const updateContent = await prisma.contentItem.update({
         where: { id },
         data: {
-            status: "APPROVED",
+            status: CONTENT_STATUS.APPROVED,
         },
         select: {
             id: true,
@@ -114,7 +116,7 @@ const rejectContent = async (id) => {
             id,
         },
         data: {
-            status: "REJECTED",
+            status: CONTENT_STATUS.REJECTED,
         },
         select: {
             id: true,

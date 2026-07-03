@@ -1,5 +1,6 @@
 const prisma = require("../../config/prisma");
 const ApiError = require("../../utils/ApiError");
+const { CONTENT_STATUS } = require("../../utils/constants");
 
 const slugify = require("../../utils/slugify");
 
@@ -93,14 +94,14 @@ const getFeed = async (
   const total =
     await prisma.contentItem.count({
       where: {
-        status: "APPROVED",
+        status: CONTENT_STATUS.APPROVED,
       },
     });
 
   const feed =
     await prisma.contentItem.findMany({
       where: {
-        status: "APPROVED",
+        status: CONTENT_STATUS.APPROVED,
       },
 
       select: {
@@ -180,7 +181,7 @@ const searchContent = async ({
 }) => {
 
   const where = {
-    status: "APPROVED",
+    status: CONTENT_STATUS.APPROVED,
   };
 
   if (q) {
@@ -263,7 +264,7 @@ const getPendingContent = async () => {
     await prisma.contentItem.findMany({
 
       where: {
-        status: "PENDING",
+        status: CONTENT_STATUS.PENDING,
       },
 
       include: {
