@@ -20,7 +20,9 @@ router.post(
     "/sources",
     auth,
     authorize(USER_ROLE.ADMIN),
-    validateRequest(createSourceSchema),
+    validateRequest({
+        body: createSourceSchema,
+    }),
     sourceController.createSource
 );
 
@@ -28,7 +30,9 @@ router.patch(
     "/sources/:id",
     auth,
     authorize(USER_ROLE.ADMIN),
-    validateRequest(updateSourceSchema),
+    validateRequest({
+        body: updateSourceSchema
+    }),
     sourceController.updatedSource
 );
 

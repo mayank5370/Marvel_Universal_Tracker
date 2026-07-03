@@ -6,7 +6,7 @@ const authorize = require("../../middlewares/authorize");
 const validateRequest = require("../../middlewares/validateRequest");
 const { USER_ROLE } = require("../../utils/constants");
 
-const { createContentSchema } = require("./content.validation");
+const { createContentSchema, searchContentSchema, } = require("./content.validation");
 
 const router = express.Router();
 
@@ -23,6 +23,9 @@ router.get(
 
 router.get(
     "/content/search",
+    validateRequest({
+        query: searchContentSchema,
+    }),
     contentController.searchContent
 );
 
@@ -33,7 +36,9 @@ router.get(
 
 router.post(
     "/content/ingest",
-    validateRequest(createContentSchema),
+    validateRequest({
+        body: createContentSchema,
+    }),
     contentController.ingestContent
 );
 

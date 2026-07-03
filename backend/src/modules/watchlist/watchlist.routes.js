@@ -15,7 +15,9 @@ const router = express.Router();
 router.post(
     "/watchlist",
     auth,
-    validateRequest(addWatchlistSchema),
+    validateRequest({
+        body: addWatchlistSchema
+    }),
     watchlistController.addToWatchlist
 );
 
@@ -29,7 +31,9 @@ router.get(
 router.patch(
     "/watchlist/:id",
     auth,
-    validateRequest(updateWatchlistSchema),
+    validateRequest({
+        body: updateWatchlistSchema
+    }),
     watchlistController.updateWatchlistItem
 );
 

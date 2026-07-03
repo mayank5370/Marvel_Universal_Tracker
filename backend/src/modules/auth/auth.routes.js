@@ -7,20 +7,24 @@ const router = express.Router();
 
 router.post(
     "/register",
-    validateRequest(registerSchema),
+    validateRequest({
+        body: registerSchema,
+    }),
     authController.register
 );
 
 router.post(
     "/login",
-    validateRequest(loginSchema),
+    validateRequest({
+        body: loginSchema
+    }),
     authController.login
 );
 
 router.get(
-        "/me",
-        auth,
-        authController.getProfile
+    "/me",
+    auth,
+    authController.getProfile
 );
 
 

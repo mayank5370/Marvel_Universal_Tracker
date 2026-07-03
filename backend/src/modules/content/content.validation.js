@@ -1,8 +1,5 @@
 const { z } = require("zod");
-const {
-    CONTENT_TYPE,
-    SPOILER_RISK,
-} = require("../../utils/constants");
+const { CONTENT_TYPE, SPOILER_RISK, } = require("../../utils/constants");
 
 const createContentSchema = z.object({
     title: z.string().min(1),
@@ -36,6 +33,29 @@ const createContentSchema = z.object({
     }),
 });
 
+const searchContentSchema = z.object({
+
+    q: z.string().optional(),
+
+    type: z
+        .enum(Object.values(CONTENT_TYPE))
+        .optional(),
+
+    spoilerRisk: z
+        .enum(Object.values(SPOILER_RISK))
+        .optional(),
+
+    sort: z
+        .enum([
+            "latest",
+            "importance",
+        ])
+        .optional(),
+
+});
+
+
 module.exports = {
     createContentSchema,
+    searchContentSchema,
 };

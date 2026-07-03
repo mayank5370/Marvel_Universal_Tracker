@@ -1,12 +1,23 @@
 const { ZodError } = require("zod");
 const ApiError = require("../utils/ApiError");
 
-const validateRequest = (schema) => {
+const validateRequest = (schemas) => {
+
     return (req, res, next) => {
 
         try {
 
-            req.body = schema.parse(req.body);
+            if (schemas.body) {
+                req.body = schemas.body.parse(req.body);
+            }
+
+            if (schemas.query) {
+                req.query = schemas.query.parse(req.query);
+            }
+
+            if (schemas.params) {
+                req.params = schemas.params.parse(req.params);
+            }
 
             next();
 
@@ -30,7 +41,9 @@ const validateRequest = (schema) => {
 
             next(error);
         }
+
     };
+
 };
 
 module.exports = validateRequest;
