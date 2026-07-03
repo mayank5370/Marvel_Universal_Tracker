@@ -8,6 +8,8 @@ const contentRoutes = require("./modules/content/content.routes");
 const watchlistRoutes = require("./modules/watchlist/watchlist.routes");
 const adminSourceRoutes = require("./modules/admin/source/source.route");
 const moderationRoutes = require("./modules/admin/moderation/moderation.route");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./api-docs/swagger");
 
 
 const app = express();
@@ -42,6 +44,12 @@ app.use("/api/admin", moderationRoutes);
 app.use("/api", contentRoutes);
 
 app.use("/api", watchlistRoutes);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
 
 app.use(globalErrorHandler);
 
