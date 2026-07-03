@@ -1,15 +1,4 @@
-const { ZodError } = require("zod");
-
-
 const globalErrorHandler = (err, req, res, next) => {
-
-    if (err instanceof ZodError) {
-        return res.status(400).json({
-            success: false,
-            statusCode: 400,
-            message: err.issues[0].message,
-        });
-    }
 
     const statusCode = err.statusCode || 500;
 
@@ -18,6 +7,10 @@ const globalErrorHandler = (err, req, res, next) => {
         statusCode,
         message: err.message || "Internal Server Error",
     };
+
+    if (err.errors && err.errors.length > 0) {
+        response.errors = err.errors;
+    }
 
     if (process.env.NODE_ENV === "development") {
         response.stack = err.stack;
