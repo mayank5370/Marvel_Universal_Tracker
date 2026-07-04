@@ -4,12 +4,16 @@ module.exports = {
 
         post: {
 
+            operationId: "registerUser",
+
             tags: ["Authentication"],
 
             summary: "Register a new user",
 
             description:
-                "Creates a new MarvelVerse account.",
+                "Creates a new MarvelVerse user account.",
+
+            security: [],
 
             requestBody: {
 
@@ -20,8 +24,14 @@ module.exports = {
                     "application/json": {
 
                         schema: {
-
                             $ref: "#/components/schemas/RegisterRequest",
+                        },
+
+                        examples: {
+
+                            register: {
+                                $ref: "#/components/examples/RegisterRequestExample",
+                            },
 
                         },
 
@@ -34,13 +44,21 @@ module.exports = {
             responses: {
 
                 201: {
-                    description:
-                        "User registered successfully",
+
+                    description: "User registered successfully",
+
                 },
 
                 400: {
-                    description:
-                        "Validation failed",
+
+                    $ref: "#/components/responses/BadRequest",
+
+                },
+
+                409: {
+
+                    $ref: "#/components/responses/Conflict",
+
                 },
 
             },
@@ -53,9 +71,16 @@ module.exports = {
 
         post: {
 
+            operationId: "loginUser",
+
             tags: ["Authentication"],
 
-            summary: "Login",
+            summary: "Login user",
+
+            description:
+                "Authenticates a user and returns JWT tokens.",
+
+            security: [],
 
             requestBody: {
 
@@ -71,6 +96,16 @@ module.exports = {
 
                         },
 
+                        examples: {
+
+                            login: {
+
+                                $ref: "#/components/examples/LoginRequestExample",
+
+                            },
+
+                        },
+
                     },
 
                 },
@@ -81,8 +116,63 @@ module.exports = {
 
                 200: {
 
+                    description: "Login successful",
+
+                },
+
+                400: {
+
+                    $ref: "#/components/responses/BadRequest",
+
+                },
+
+                401: {
+
+                    $ref: "#/components/responses/Unauthorized",
+
+                },
+
+            },
+
+        },
+
+    },
+
+    "/auth/me": {
+
+        get: {
+
+            operationId: "getCurrentUser",
+
+            tags: ["Authentication"],
+
+            summary: "Get current user profile",
+
+            description:
+                "Returns the authenticated user's profile.",
+
+            security: [
+
+                {
+
+                    bearerAuth: [],
+
+                },
+
+            ],
+
+            responses: {
+
+                200: {
+
                     description:
-                        "Login successful",
+                        "Profile fetched successfully",
+
+                },
+
+                401: {
+
+                    $ref: "#/components/responses/Unauthorized",
 
                 },
 

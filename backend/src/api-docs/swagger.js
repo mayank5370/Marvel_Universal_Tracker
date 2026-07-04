@@ -3,6 +3,7 @@ const {
     responses,
     parameters,
     securitySchemes,
+    examples,
     tags,
     paths,
 } = require("./index");
@@ -29,7 +30,7 @@ const swaggerSpec = {
         url: "https://github.com/mayank5370/Marvel_Universal_Tracker",
     },
 
-    logo: {
+    "x-logo": {
         url: "...",
     },
 
@@ -52,6 +53,8 @@ const swaggerSpec = {
         responses,
 
         parameters,
+
+        examples,
 
     },
 

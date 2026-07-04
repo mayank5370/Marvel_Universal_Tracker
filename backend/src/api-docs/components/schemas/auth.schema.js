@@ -1,4 +1,4 @@
-const authSchemas = {
+module.exports = {
 
     RegisterRequest: {
 
@@ -14,17 +14,19 @@ const authSchemas = {
 
             name: {
                 type: "string",
-                example: "Peter Parker",
+                example: "Tony Stark",
             },
 
             email: {
                 type: "string",
-                example: "peter@gmail.com",
+                format: "email",
+                example: "tony@starkindustries.com",
             },
 
             password: {
                 type: "string",
-                example: "secret123",
+                format: "password",
+                example: "IronMan@123",
             },
 
         },
@@ -44,12 +46,65 @@ const authSchemas = {
 
             email: {
                 type: "string",
-                example: "peter@gmail.com",
+                format: "email",
+                example: "tony@starkindustries.com",
             },
 
             password: {
                 type: "string",
-                example: "secret123",
+                format: "password",
+                example: "IronMan@123",
+            },
+
+        },
+
+    },
+
+    User: {
+
+        type: "object",
+
+        properties: {
+
+            id: {
+                type: "string",
+                example: "cmr07fg9p0001uecofk7ibewe",
+            },
+
+            name: {
+                type: "string",
+                example: "Tony Stark",
+            },
+
+            email: {
+                type: "string",
+                example: "tony@starkindustries.com",
+            },
+
+            role: {
+                type: "string",
+                enum: [
+                    "USER",
+                    "ADMIN",
+                ],
+            },
+
+        },
+
+    },
+
+    AuthTokens: {
+
+        type: "object",
+
+        properties: {
+
+            accessToken: {
+                type: "string",
+            },
+
+            refreshToken: {
+                type: "string",
             },
 
         },
@@ -57,5 +112,3 @@ const authSchemas = {
     },
 
 };
-
-module.exports = authSchemas;
