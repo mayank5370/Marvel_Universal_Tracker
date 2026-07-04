@@ -4,25 +4,27 @@ module.exports = {
 
         type: "object",
 
-        properties: {
+        ApiResponse: {
 
-            success: {
-                type: "boolean",
-                example: true,
-            },
+            type: "object",
 
-            statusCode: {
-                type: "integer",
-                example: 200,
-            },
+            properties: {
 
-            message: {
-                type: "string",
-                example: "Request completed successfully",
-            },
+                success: {
+                    type: "boolean",
+                    example: true,
+                },
 
-            data: {
-                type: "object",
+                statusCode: {
+                    type: "integer",
+                    example: 200,
+                },
+
+                message: {
+                    type: "string",
+                    example: "Request completed successfully",
+                },
+
             },
 
         },

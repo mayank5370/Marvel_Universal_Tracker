@@ -1,3 +1,15 @@
+const {
+    successResponse,
+    createdResponse,
+} = require("../utils/responseFactory");
+
+const {
+    badRequestResponse,
+    unauthorizedResponse,
+    conflictResponse,
+} = require("../utils/errorFactory");
+
+
 module.exports = {
 
     "/auth/register": {
@@ -43,23 +55,14 @@ module.exports = {
 
             responses: {
 
-                201: {
+                201: createdResponse(
+                    "User",
+                    "User registered successfully"
+                ),
 
-                    description: "User registered successfully",
+                400: badRequestResponse(),
 
-                },
-
-                400: {
-
-                    $ref: "#/components/responses/BadRequest",
-
-                },
-
-                409: {
-
-                    $ref: "#/components/responses/Conflict",
-
-                },
+                409: conflictResponse(),
 
             },
 
@@ -114,25 +117,16 @@ module.exports = {
 
             responses: {
 
-                200: {
+                200: successResponse(
+                    "AuthTokens",
+                    "Login successful"
+                ),
 
-                    description: "Login successful",
+                400: badRequestResponse(),
 
-                },
+                401: unauthorizedResponse(),
 
-                400: {
-
-                    $ref: "#/components/responses/BadRequest",
-
-                },
-
-                401: {
-
-                    $ref: "#/components/responses/Unauthorized",
-
-                },
-
-            },
+            }
 
         },
 
@@ -163,18 +157,12 @@ module.exports = {
 
             responses: {
 
-                200: {
+                200: successResponse(
+                    "User",
+                    "Profile fetched successfully"
+                ),
 
-                    description:
-                        "Profile fetched successfully",
-
-                },
-
-                401: {
-
-                    $ref: "#/components/responses/Unauthorized",
-
-                },
+                401: unauthorizedResponse(),
 
             },
 
