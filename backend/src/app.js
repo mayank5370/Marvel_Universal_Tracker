@@ -10,6 +10,7 @@ const adminSourceRoutes = require("./modules/admin/source/source.route");
 const moderationRoutes = require("./modules/admin/moderation/moderation.route");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./api-docs/swagger");
+const requestLogger = require("./middlewares/requestLogger");
 
 
 const app = express();
@@ -22,6 +23,8 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use(requestLogger);
 
 app.use(cookieParser());
 
