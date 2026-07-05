@@ -6,6 +6,8 @@ const app = require("./src/app");
 
 const server = http.createServer(app);
 
+const { startRSSScheduler, } = require("./src/scheduler/rss.scheduler");
+
 server.listen(env.port, () => {
   console.log(`
 =====================================
@@ -17,4 +19,9 @@ server.listen(env.port, () => {
 
 =====================================
 `);
+
+console.log("Starting scheduler...");
+startRSSScheduler();
+console.log("Scheduler started.");
+
 });
