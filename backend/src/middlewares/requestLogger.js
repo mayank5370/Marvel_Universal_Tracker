@@ -4,8 +4,14 @@ const logger = require("../logger/logger");
 const requestLogger = pinoHttp({
     logger,
 
+    customProps(req) {
+        return {
+            requestId: req.requestId,
+        };
+    },
+
     customLogLevel(req, res, err) {
-        if (res.statusCode >= 500 || err) {
+        if (err || res.statusCode >= 500) {
             return "error";
         }
 
@@ -16,12 +22,12 @@ const requestLogger = pinoHttp({
         return "info";
     },
 
-    customSuccessMessage(req, res) {
-        return `${req.method} ${req.url} completed`;
+    customSuccessMessage(req) {
+        return `${req.method} ${req.originalUrl} completed`;
     },
 
     customErrorMessage(req, res) {
-        return `${req.method} ${req.url} failed`;
+        return `${req.method} ${req.originalUrl} failed`;
     },
 
     serializers: {

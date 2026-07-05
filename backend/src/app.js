@@ -3,6 +3,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const env = require("./config/env");
 const globalErrorHandler = require("./middlewares/globalErrorHandler");
+const testRoutes = require("./routes/test.route");
+const authRoutes = require("./modules/auth/auth.routes");
 const adminDashboardRoutes = require("./modules/admin/dashboard/dashboard.route");
 const contentRoutes = require("./modules/content/content.routes");
 const watchlistRoutes = require("./modules/watchlist/watchlist.routes");
@@ -11,6 +13,14 @@ const moderationRoutes = require("./modules/admin/moderation/moderation.route");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./api-docs/swagger");
 const requestLogger = require("./middlewares/requestLogger");
+const requestId = require("./middlewares/requestId");
+const helmet = require("helmet");
+const compression = require("compression");
+const {
+    authLimiter,
+    apiLimiter,
+    adminLimiter,
+} = require("./config/rateLimiter");
 
 
 const app = express();
@@ -22,7 +32,17 @@ app.use(
   })
 );
 
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
+
+app.use(compression());
+
 app.use(express.json());
+
+app.use(requestId);
 
 app.use(requestLogger);
 
@@ -30,26 +50,23 @@ app.use(cookieParser());
 
 
 
-const testRoutes = require("./routes/test.route");
+app.use("/api/auth", authLimiter, authRoutes);
 
-const authRoutes = require("./modules/auth/auth.routes");
+app.use("/api/test", apiLimiter, testRoutes);
 
-app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminLimiter, adminDashboardRoutes);
 
-app.use("/api/test", testRoutes);
+app.use("/api/admin", adminLimiter, adminSourceRoutes);
 
-app.use("/api/admin", adminDashboardRoutes);
+app.use("/api/admin", adminLimiter, moderationRoutes);
 
-app.use("/api/admin", adminSourceRoutes);
+app.use("/api", apiLimiter, contentRoutes);
 
-app.use("/api/admin", moderationRoutes);
-
-app.use("/api", contentRoutes);
-
-app.use("/api", watchlistRoutes);
+app.use("/api", apiLimiter, watchlistRoutes);
 
 app.use(
   "/api-docs",
+  apiLimiter,
   swaggerUi.serve,
   swaggerUi.setup(swaggerSpec)
 );
