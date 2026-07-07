@@ -27,8 +27,8 @@ router.get(
 );
 
 router.get(
-    "/content/:id",
-    contentController.getContentById
+    "/content/:slug",
+    contentController.getContentBySlug
 );
 
 router.post(

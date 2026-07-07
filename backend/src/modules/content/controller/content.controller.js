@@ -51,9 +51,9 @@ const getFeed = asyncHandler(async (req, res) => {
 });
 
 
-const getContentById = asyncHandler(async (req, res) => {
+const getContentBySlug = asyncHandler(async (req, res) => {
 
-    const result = await contentService.getContentById(req.params.id);
+    const result = await contentService.getContentBySlug(req.params.slug);
 
     return res.status(200).json(
         new ApiResponse(
@@ -121,7 +121,7 @@ module.exports = {
     checkDuplicate,
     ingestContent,
     getFeed,
-    getContentById,
+    getContentBySlug,
     searchContent,
     getPendingContent,
     getAllContentAdmin,

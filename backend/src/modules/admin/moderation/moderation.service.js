@@ -54,7 +54,10 @@ const getContentDetails = async (id) => {
     });
 
     if (!content) {
-        throw new Error("Content not found");
+        throw new ApiError(
+            404,
+            "Content not found"
+        );
     }
 
     return content;
@@ -68,11 +71,15 @@ const approvedContent = async (id) => {
     });
 
     if (!content) {
-        throw new Error("Content not found");
+        throw new ApiError(
+            404,
+            "Content not found"
+        );
     }
 
     if (content.status !== "PENDING") {
-        throw new Error(
+        throw new ApiError(
+            400,
             `Cannot approve content with status ${content.status}`
         );
     }
@@ -102,12 +109,16 @@ const rejectContent = async (id) => {
     });
 
     if (!content) {
-        throw new Error("Content not found");
+         throw new ApiError(
+            404,
+            "Content not found"
+        );
     }
 
     if (content.status !== "PENDING") {
-        throw new Error(
-            `Cannot reject content with status ${content.status}`
+        throw new ApiError(
+            400,
+            `Cannot approve content with status ${content.status}`
         );
     }
 

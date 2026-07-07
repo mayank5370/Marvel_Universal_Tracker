@@ -1,6 +1,6 @@
 const prisma = require("../../../config/prisma");
 const ApiError = require("../../../utils/ApiError");
-const { CONTENT_STATUS } = require("../../../utils/ApiError");
+const { CONTENT_STATUS } = require("../../../utils/constants");
 
 const slugify = require("../../../utils/slugify");
 
@@ -86,15 +86,15 @@ const getFeed = async (
 const getContentBySlug = async (slug) => {
   const content = await prisma.contentItem.findUnique({
     where: {
-        slug,
+      slug,
     },
 
     include: {
-        source: true,
-        aiEnrichment: true,
-        prerequisites: true,
+      source: true,
+      aiEnrichment: true,
+      prerequisites: true,
     },
-});
+  });
 
   if (!content) {
     throw new ApiError(
