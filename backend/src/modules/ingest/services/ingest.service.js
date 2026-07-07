@@ -1,23 +1,21 @@
 const prisma = require("../../../config/prisma");
-const  ApiError  = require("../../../utils/ApiError");
+const ApiError = require("../../../utils/ApiError");
+const { getIO } = require("../../../socket/socket");
 
 class IngestService {
 
     async ingest(payload) {
 
-        console.log("SERVICE STARTED");
+
 
         const items = Array.isArray(payload)
             ? payload
             : [payload];
 
-        console.log("Items:", items.length);
-
         const createdItems = [];
 
         for (const item of items) {
 
-            console.log("Processing:", item.title);
 
             const source = await prisma.source.findUnique({
                 where: {
@@ -25,7 +23,6 @@ class IngestService {
                 },
             });
 
-            console.log("Source:", source);
 
             if (!source) {
                 throw new ApiError(
@@ -34,13 +31,10 @@ class IngestService {
                 );
             }
 
-            console.log("Starting Transaction");
 
             try {
 
                 const created = await prisma.$transaction(async (tx) => {
-
-                    console.log("Creating ContentItem");
 
                     const contentItem = await tx.contentItem.create({
                         data: {
@@ -56,9 +50,6 @@ class IngestService {
                         },
                     });
 
-                    console.log("ContentItem Created:", contentItem.id);
-
-                    console.log("Creating AI Enrichment");
 
                     await tx.aiEnrichment.create({
                         data: {
@@ -71,36 +62,45 @@ class IngestService {
                         },
                     });
 
-                    console.log("AI Enrichment Created");
+
 
                     return contentItem;
                 });
 
                 createdItems.push(created);
-            } catch (error) {
-                if (
-                    error.code === "P2002" &&
-                    error.meta?.target?.includes("slug")
-                ) {
 
+                getIO().emit("feed:new_items", {
+
+                    id: created.id,
+
+                    title: created.title,
+
+                    slug: created.slug,
+
+                    contentType: created.contentType,
+
+                    publishedAt: created.publishedAt,
+
+                });
+
+            } catch (error) {
+                if (error.code === "P2002") {
                     throw new ApiError(
                         409,
                         "Content already exists."
                     );
-
                 }
 
                 throw error
             }
 
-            console.log("SERVICE COMPLETED");
 
-            return {
-                processed: items.length,
-                created: createdItems.length,
-                items: createdItems,
-            };
         }
+        return {
+            processed: items.length,
+            created: createdItems.length,
+            items: createdItems,
+        };
 
     }
 }
