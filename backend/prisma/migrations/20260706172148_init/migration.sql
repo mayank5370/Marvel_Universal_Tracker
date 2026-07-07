@@ -1,4 +1,7 @@
 -- CreateEnum
+CREATE TYPE "public"."UserRole" AS ENUM ('USER', 'ADMIN');
+
+-- CreateEnum
 CREATE TYPE "public"."ContentStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
 
 -- CreateEnum
@@ -8,11 +11,28 @@ CREATE TYPE "public"."ContentType" AS ENUM ('MOVIE', 'SERIES', 'TRAILER', 'ANNOU
 CREATE TYPE "public"."SpoilerRisk" AS ENUM ('LOW', 'MEDIUM', 'HIGH');
 
 -- CreateTable
+CREATE TABLE "public"."users" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
+    "role" "public"."UserRole" NOT NULL DEFAULT 'USER',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "public"."Source" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "rssUrl" TEXT NOT NULL,
     "baseUrl" TEXT,
+    "description" TEXT,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "priority" INTEGER NOT NULL DEFAULT 0,
+    "lastSyncAt" TIMESTAMP(3),
+    "lastError" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -74,6 +94,15 @@ CREATE TABLE "public"."WatchlistItem" (
 
     CONSTRAINT "WatchlistItem_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Source_name_key" ON "public"."Source"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Source_rssUrl_key" ON "public"."Source"("rssUrl");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ContentItem_slug_key" ON "public"."ContentItem"("slug");

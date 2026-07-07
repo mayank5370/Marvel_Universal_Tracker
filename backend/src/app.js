@@ -23,6 +23,11 @@ const {
 } = require("./config/rateLimiter");
 
 
+
+const ingestRoutes = require("./modules/ingest");
+
+
+
 const app = express();
 
 app.use(
@@ -49,6 +54,8 @@ app.use(requestLogger);
 app.use(cookieParser());
 
 
+
+app.use("/api/ingest", ingestRoutes);
 
 app.use("/api/auth", authLimiter, authRoutes);
 
