@@ -1,76 +1,9 @@
-const prisma = require("../../config/prisma");
-const ApiError = require("../../utils/ApiError");
-const { CONTENT_STATUS } = require("../../utils/constants");
+const prisma = require("../../../config/prisma");
+const ApiError = require("../../../utils/ApiError");
+const { CONTENT_STATUS } = require("../../../utils/ApiError");
 
-const slugify = require("../../utils/slugify");
+const slugify = require("../../../utils/slugify");
 
-const createContent = async (payload) => {
-  const existingContent =
-    await prisma.contentItem.findUnique({
-      where: {
-        sourceUrl: payload.sourceUrl,
-      },
-    });
-
-  if (existingContent) {
-    throw new ApiError(
-      409,
-      "Content already exists"
-    );
-  }
-
-  const result = await prisma.$transaction(
-    async (tx) => {
-
-      const source = await tx.source.upsert({
-        where: {
-          name: payload.sourceName,
-        },
-        update: {},
-        create: {
-          name: payload.sourceName,
-        },
-      });
-
-      const contentItem =
-        await tx.contentItem.create({
-          data: {
-            title: payload.title,
-            slug: slugify(payload.title),
-            summary: payload.summary,
-            content: payload.content,
-            thumbnailUrl: payload.thumbnailUrl,
-            sourceUrl: payload.sourceUrl,
-            publishedAt: new Date(payload.publishedAt),
-            contentType: payload.contentType,
-            sourceId: source.id,
-          },
-        });
-
-      const aiEnrichment =
-        await tx.aiEnrichment.create({
-          data: {
-            contentItemId: contentItem.id,
-            tldr: payload.ai.tldr,
-            importanceScore:
-              payload.ai.importanceScore,
-            spoilerRisk:
-              payload.ai.spoilerRisk,
-            tags: payload.ai.tags,
-            entities: payload.ai.entities,
-          },
-        });
-
-      return {
-        source,
-        content: contentItem,
-        aiEnrichment,
-      };
-    }
-  );
-
-  return result;
-};
 
 const checkDuplicate = async (sourceUrl) => {
   const content = await prisma.contentItem.findUnique({
@@ -150,18 +83,18 @@ const getFeed = async (
   };
 };
 
-const getContentById = async (id) => {
+const getContentBySlug = async (slug) => {
   const content = await prisma.contentItem.findUnique({
     where: {
-      id,
+        slug,
     },
 
     include: {
-      source: true,
-      aiEnrichment: true,
-      prerequisites: true,
+        source: true,
+        aiEnrichment: true,
+        prerequisites: true,
     },
-  });
+});
 
   if (!content) {
     throw new ApiError(
@@ -299,10 +232,9 @@ const getAllContentAdmin = async () => {
 };
 
 module.exports = {
-  createContent,
   checkDuplicate,
   getFeed,
-  getContentById,
+  getContentBySlug,
   searchContent,
   getPendingContent,
   getAllContentAdmin,

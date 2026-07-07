@@ -1,6 +1,6 @@
-const ApiResponse = require("../../utils/ApiResponse");
-const asyncHandler = require("../../utils/asyncHandler");
-const contentService = require("./content.service");
+const ApiResponse = require("../../../utils/ApiResponse");
+const asyncHandler = require("../../../utils/asyncHandler");
+const contentService = require("../services/content.service");
 
 const checkDuplicate = asyncHandler(async (req, res) => {
 

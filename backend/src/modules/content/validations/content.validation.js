@@ -1,5 +1,5 @@
 const { z } = require("zod");
-const { CONTENT_TYPE, SPOILER_RISK, } = require("../../utils/constants");
+const { CONTENT_TYPE, SPOILER_RISK, } = require("../../../utils/constants");
 
 const createContentSchema = z.object({
     title: z.string().min(1),

@@ -1,10 +1,10 @@
 const express = require("express");
-const contentController = require("./content.controller");
-const auth = require("../../middlewares/auth");
-const authorize = require("../../middlewares/authorize");
-const validateRequest = require("../../middlewares/validateRequest");
-const { USER_ROLE } = require("../../utils/constants");
-const { createContentSchema, searchContentSchema, } = require("./content.validation");
+const contentController = require("../controller/content.controller");
+const auth = require("../../../middlewares/auth");
+const authorize = require("../../../middlewares/authorize");
+const validateRequest = require("../../../middlewares/validateRequest");
+const { USER_ROLE } = require("../../../utils/constants");
+const { createContentSchema, searchContentSchema, } = require("../validations/content.validation");
 const router = express.Router();
 
 
