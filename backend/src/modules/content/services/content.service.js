@@ -16,71 +16,92 @@ const checkDuplicate = async (sourceUrl) => {
   };
 };
 
-const getFeed = async (
-  page = 1,
-  limit = 10
-) => {
+const getFeed = async (cursor, limit = 10) => {
 
-  const skip =
-    (page - 1) * limit;
+  limit = Number(limit);
 
-  const total =
-    await prisma.contentItem.count({
-      where: {
-        status: CONTENT_STATUS.APPROVED,
-      },
-    });
+  const items = await prisma.contentItem.findMany({
 
-  const feed =
-    await prisma.contentItem.findMany({
-      where: {
-        status: CONTENT_STATUS.APPROVED,
-      },
-
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        summary: true,
-        thumbnailUrl: true,
-        publishedAt: true,
-        contentType: true,
-
-        source: {
-          select: {
-            name: true,
-          },
-        },
-
-        aiEnrichment: {
-          select: {
-            tldr: true,
-            importanceScore: true,
-            spoilerRisk: true,
-            tags: true,
-          },
-        },
-      },
-
-      orderBy: {
-        publishedAt: "desc",
-      },
-
-      skip,
-      take: limit,
-    });
-
-  return {
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages:
-        Math.ceil(total / limit),
+    where: {
+      status: "APPROVED",
     },
 
-    data: feed,
+    select: {
+
+      id: true,
+
+      title: true,
+
+      slug: true,
+
+      summary: true,
+
+      thumbnailUrl: true,
+
+      publishedAt: true,
+
+      contentType: true,
+
+      source: {
+        select: {
+          name: true,
+        },
+      },
+
+      aiEnrichment: {
+        select: {
+          tldr: true,
+          importanceScore: true,
+          spoilerRisk: true,
+          tags: true,
+        },
+      },
+
+    },
+
+    orderBy: [
+      {
+        publishedAt: "desc",
+      },
+      {
+        id: "desc",
+      },
+    ],
+
+    take: limit + 1,
+
+    ...(cursor && {
+
+      cursor: {
+        id: cursor,
+      },
+
+      skip: 1,
+
+    }),
+
+  });
+
+  const hasMore = items.length > limit;
+
+  if (hasMore) {
+
+    items.pop();
+
+  }
+
+  return {
+
+    items,
+
+    nextCursor: hasMore
+      ? items[items.length - 1].id
+      : null,
+
+    hasMore,
+
   };
+
 };
 
 const getContentBySlug = async (slug) => {

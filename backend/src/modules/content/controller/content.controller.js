@@ -18,19 +18,21 @@ const checkDuplicate = asyncHandler(async (req, res) => {
 
 });
 
+
 const getFeed = asyncHandler(async (req, res) => {
 
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const { cursor, limit } = req.query;
 
-    const result = await contentService.getFeed(page, limit);
+    const result = await contentService.getFeed(
+        cursor,
+        limit
+    );
 
     return res.status(200).json(
         new ApiResponse(
             200,
             "Content feed fetched successfully",
-            result.data,
-            result.pagination
+            result
         )
     );
 

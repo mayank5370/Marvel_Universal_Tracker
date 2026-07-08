@@ -1,21 +1,37 @@
 const prisma = require("../../config/prisma");
 const ApiError = require("../../utils/ApiError");
+const { CONTENT_STATUS } = require("../../utils/constants");
 
-const addToWatchlist = async (
-    userId,
-    contentItemId
-) => {
+const addToWatchlist = async (userId, contentItemId) => {
+
     const existing = await prisma.watchlistItem.findUnique({
         where: {
             userId_contentItemId: {
                 userId,
                 contentItemId,
             },
+            status: CONTENT_STATUS.APPROVED,
         },
     });
 
     if (existing) {
-        throw new Error("Content already exists in Watch-List");
+        throw new ApiError(
+            409,
+            "Content already exists in watchlist."
+        );
+    }
+
+    const content = await prisma.contentItem.findUnique({
+        where: {
+            id: contentItemId,
+        },
+    });
+
+    if (!content) {
+        throw new ApiError(
+            404,
+            "Content not found."
+        );
     }
 
     const item = await prisma.watchlistItem.create({
@@ -23,12 +39,24 @@ const addToWatchlist = async (
             userId,
             contentItemId,
         },
+        include: {
+            contentItem: {
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    thumbnailUrl: true,
+                    contentType: true,
+                },
+            },
+        },
     });
 
     return item;
 };
 
 const getMyWatchList = async (userId) => {
+
     const watchlist = await prisma.watchlistItem.findMany({
         where: {
             userId,
@@ -42,47 +70,26 @@ const getMyWatchList = async (userId) => {
                     slug: true,
                     thumbnailUrl: true,
                     contentType: true,
+                    publishedAt: true,
+                    status: true,
                 },
             },
         },
 
         orderBy: {
             createdAt: "desc",
-        }
+        },
     });
 
     return watchlist;
 };
 
+const updateWatchlistItem = async (
+    userId,
+    watchlistId,
+    watched
+) => {
 
-const updateWatchlistItem = async (userId, watchlistId, watched) => {
-    const existing = await prisma.watchlistItem.findFirst({
-        where: {
-            id: watchlistId,
-            userId,
-        },
-    });
-
-    if (!existing) {
-        throw new ApiError(
-            409,
-            "Content already exists in watchlist"
-        );
-    }
-
-    const updateItem = await prisma.watchlistItem.update({
-        where: {
-            id: watchlistId,
-        },
-        data: {
-            watched,
-        },
-    });
-
-    return updateItem;
-};
-
-const removeWatchlistItem = async (userId, watchlistId) => {
     const existing = await prisma.watchlistItem.findFirst({
         where: {
             id: watchlistId,
@@ -93,7 +100,38 @@ const removeWatchlistItem = async (userId, watchlistId) => {
     if (!existing) {
         throw new ApiError(
             404,
-            "Watchlist item not found"
+            "Watchlist item not found."
+        );
+    }
+
+    const updatedItem = await prisma.watchlistItem.update({
+        where: {
+            id: watchlistId,
+        },
+        data: {
+            watched,
+        },
+    });
+
+    return updatedItem;
+};
+
+const removeWatchlistItem = async (
+    userId,
+    watchlistId
+) => {
+
+    const existing = await prisma.watchlistItem.findFirst({
+        where: {
+            id: watchlistId,
+            userId,
+        },
+    });
+
+    if (!existing) {
+        throw new ApiError(
+            404,
+            "Watchlist item not found."
         );
     }
 
@@ -107,7 +145,6 @@ const removeWatchlistItem = async (userId, watchlistId) => {
         deleted: true,
     };
 };
-
 
 module.exports = {
     addToWatchlist,
