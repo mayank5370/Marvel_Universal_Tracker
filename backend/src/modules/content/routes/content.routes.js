@@ -27,16 +27,18 @@ router.get(
 );
 
 router.get(
-    "/content/:slug",
-    contentController.getContentBySlug
+    "/content/hero",
+    contentController.getHero
 );
 
-router.post(
-    "/content/ingest",
-    validateRequest({
-        body: createContentSchema,
-    }),
-    contentController.ingestContent
+router.get(
+    "/content/:slug/prerequisites",
+    contentController.getPrerequisites
+);
+
+router.get(
+    "/content/:slug",
+    contentController.getContentBySlug
 );
 
 router.get(

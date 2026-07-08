@@ -18,20 +18,6 @@ const checkDuplicate = asyncHandler(async (req, res) => {
 
 });
 
-const ingestContent = asyncHandler(async (req, res) => {
-
-    const result = await contentService.createContent(req.body);
-
-    return res.status(201).json(
-        new ApiResponse(
-            201,
-            "Content ingested successfully",
-            result
-        )
-    );
-
-});
-
 const getFeed = asyncHandler(async (req, res) => {
 
     const page = Number(req.query.page) || 1;
@@ -115,14 +101,46 @@ const getAllContentAdmin = asyncHandler(async (req, res) => {
     );
 });
 
+const getHero = asyncHandler(async (req, res) => {
 
+    const result = await contentService.getHero();
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Hero content fetched successfully",
+            result
+        )
+    );
+
+});
+
+const getPrerequisites = asyncHandler(async (req, res) => {
+
+    const result =
+        await contentService.getPrerequisites(
+            req.params.slug
+        );
+
+    return res.status(200).json(
+
+        new ApiResponse(
+            200,
+            "Prerequisites fetched successfully",
+            result
+        )
+
+    );
+
+});
 
 module.exports = {
     checkDuplicate,
-    ingestContent,
     getFeed,
     getContentBySlug,
     searchContent,
     getPendingContent,
     getAllContentAdmin,
+    getHero,
+    getPrerequisites,
 };

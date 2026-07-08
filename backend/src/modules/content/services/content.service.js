@@ -231,6 +231,108 @@ const getAllContentAdmin = async () => {
   return contents;
 };
 
+const getHero = async () => {
+
+  const now = new Date();
+
+  const [latestRelease, nextUpcoming] = await Promise.all([
+
+    prisma.contentItem.findFirst({
+
+      where: {
+        status: "APPROVED",
+        publishedAt: {
+          lte: now,
+        },
+      },
+
+      include: {
+        source: true,
+        aiEnrichment: true,
+      },
+
+      orderBy: {
+        publishedAt: "desc",
+      },
+
+    }),
+
+    prisma.contentItem.findFirst({
+
+      where: {
+        status: "APPROVED",
+        publishedAt: {
+          gt: now,
+        },
+      },
+
+      include: {
+        source: true,
+        aiEnrichment: true,
+      },
+
+      orderBy: {
+        publishedAt: "asc",
+      },
+
+    }),
+
+  ]);
+
+  return {
+
+    latestRelease,
+
+    nextUpcoming,
+
+  };
+
+};
+
+const getPrerequisites = async (slug) => {
+
+  const content =
+    await prisma.contentItem.findUnique({
+
+      where: {
+        slug,
+      },
+
+      select: {
+
+        title: true,
+
+        prerequisites: {
+
+          select: {
+
+            id: true,
+
+            title: true,
+
+            description: true,
+
+          },
+
+        },
+
+      },
+
+    });
+
+  if (!content) {
+
+    throw new ApiError(
+      404,
+      "Content not found"
+    );
+
+  }
+
+  return content;
+
+};
+
 module.exports = {
   checkDuplicate,
   getFeed,
@@ -238,4 +340,6 @@ module.exports = {
   searchContent,
   getPendingContent,
   getAllContentAdmin,
+  getHero,
+  getPrerequisites,
 };
