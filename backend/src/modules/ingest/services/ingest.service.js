@@ -1,6 +1,7 @@
 const prisma = require("../../../config/prisma");
 const ApiError = require("../../../utils/ApiError");
 const { getIO } = require("../../../socket/socket");
+const notificationService = require("../../notifications/notification.service");
 
 class IngestService {
 
@@ -68,6 +69,10 @@ class IngestService {
                 });
 
                 createdItems.push(created);
+
+                await notificationService.processNewContent(
+                    created.id
+                );
 
                 getIO().emit("feed:new_items", {
 
