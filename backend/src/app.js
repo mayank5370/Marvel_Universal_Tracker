@@ -14,6 +14,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./api-docs/swagger");
 const requestLogger = require("./middlewares/requestLogger");
 const requestId = require("./middlewares/requestId");
+const notificationRoutes = require("./modules/notifications/notification.route");
 const helmet = require("helmet");
 const compression = require("compression");
 const {
@@ -21,6 +22,7 @@ const {
     apiLimiter,
     adminLimiter,
 } = require("./config/rateLimiter");
+
 
 
 
@@ -70,6 +72,8 @@ app.use("/api/admin", adminLimiter, moderationRoutes);
 app.use("/api", apiLimiter, contentRoutes);
 
 app.use("/api", apiLimiter, watchlistRoutes);
+
+app.use("/api", apiLimiter, notificationRoutes);
 
 app.use(
   "/api-docs",

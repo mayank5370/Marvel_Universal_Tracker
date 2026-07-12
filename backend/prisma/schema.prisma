@@ -36,40 +36,42 @@ enum SpoilerRisk {
 }
 
 model User {
-  id String @id @default(cuid())
-  email String @unique
-  passwordHash String
-  role UserRole @default(USER)
-  watchlistItems WatchlistItem[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                       String                     @id @default(cuid())
+  email                    String                     @unique
+  passwordHash             String
+  role                     UserRole                   @default(USER)
+  watchlistItems           WatchlistItem[]
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  notifications Notification[]
+
   @@map("users")
 }
 
 model Source {
-  id           String        @id @default(cuid())
+  id String @id @default(cuid())
 
-  name         String        @unique
+  name String @unique
 
-  rssUrl       String        @unique
+  rssUrl String @unique
 
-  baseUrl      String?
+  baseUrl String?
 
-  description  String?
+  description String?
 
-  isActive     Boolean       @default(true)
+  isActive Boolean @default(true)
 
-  priority     Int           @default(0)
+  priority Int @default(0)
 
-  lastSyncAt   DateTime?
+  lastSyncAt DateTime?
 
-  lastError    String?
+  lastError String?
 
   contentItems ContentItem[]
 
-  createdAt    DateTime      @default(now())
+  createdAt DateTime @default(now())
 
-  updatedAt    DateTime      @updatedAt
+  updatedAt DateTime @updatedAt
 }
 
 model ContentItem {
@@ -102,6 +104,8 @@ model ContentItem {
   prerequisites Prerequisite[]
 
   watchlistItems WatchlistItem[]
+
+  notifications Notification[]
 
   createdAt DateTime @default(now())
 
@@ -166,3 +170,29 @@ model WatchlistItem {
   @@unique([userId, contentItemId])
 }
 
+model Notification {
+
+  id String @id @default(cuid())
+
+  userId String
+
+  title String
+
+  message String
+
+  type String
+
+  isRead Boolean @default(false)
+
+  contentItemId String?
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  contentItem ContentItem? @relation(fields: [contentItemId], references: [id])
+
+  @@index([userId])
+
+  @@index([isRead])
+}
