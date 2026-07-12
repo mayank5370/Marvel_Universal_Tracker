@@ -32,6 +32,16 @@ const getNotifications = async (userId) => {
 
 };
 
+const processNewContent = async (contentItemId) => {
+
+    console.log(
+        "Notification Service Started:",
+        contentItemId
+    );
+
+};
+
 module.exports = {
     getNotifications,
+    processNewContent,
 };

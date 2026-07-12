@@ -29,11 +29,13 @@ router.get(
     watchlistController.getMyWatchList
 );
 
+
 router.get(
     "/watchlist/upcoming",
     auth,
     watchlistController.getUpcomingWatchlist
 );
+
 
 router.patch(
     "/watchlist/:id",
@@ -43,6 +45,7 @@ router.patch(
     }),
     watchlistController.updateWatchlistItem
 );
+
 
 router.delete(
     "/watchlist/:id",
