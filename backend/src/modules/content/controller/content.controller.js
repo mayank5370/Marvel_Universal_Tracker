@@ -136,6 +136,8 @@ const getPrerequisites = asyncHandler(async (req, res) => {
 
 });
 
+
+
 module.exports = {
     checkDuplicate,
     getFeed,
@@ -145,4 +147,5 @@ module.exports = {
     getAllContentAdmin,
     getHero,
     getPrerequisites,
+    
 };

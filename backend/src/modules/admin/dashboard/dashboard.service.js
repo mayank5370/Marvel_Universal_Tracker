@@ -1,54 +1,13 @@
 const prisma = require("../../../config/prisma");
 const { CONTENT_STATUS } = require("../../../utils/constants");
 
+
 const getDashboardStats = async () => {
-
-    const totalContent = await prisma.contentItem.count();
-
-    const pendingContent = await prisma.contentItem.count({
-        where: {
-            status: CONTENT_STATUS.PENDING,
-        },
-    });
-
-    const approvedContent = await prisma.contentItem.count({
-        where: {
-            status: CONTENT_STATUS.APPROVED,
-        },
-    });
-
-    const rejectedContent = await prisma.contentItem.count({
-        where: {
-            status: CONTENT_STATUS.REJECTED,
-        },
-    });
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const todayContent = await prisma.contentItem.count({
-        where: {
-            createdAt: {
-                gte: today,
-            },
-        },
-    });
-
-    const totalSources = await prisma.source.count();
-
-    const activeSources = await prisma.source.count({
-        where: {
-            isActive: true,
-        },
-    });
-
-    const importance = await prisma.aiEnrichment.aggregate({
-        _avg: {
-            importanceScore: true,
-        },
-    });
-
-    return {
+    const [
         totalContent,
         pendingContent,
         approvedContent,
@@ -56,9 +15,99 @@ const getDashboardStats = async () => {
         todayContent,
         totalSources,
         activeSources,
-        averageImportance: importance._avg.importanceScore || 0,
-    };
+        importance,
+
+        contentTypes,
+
+        recentContent,
+
+        topSources,
+
+    ] = await Promise.all([
+
+        prisma.contentItem.count(),
+
+        prisma.contentItem.count({
+            where: {
+                status: CONTENT_STATUS.PENDING,
+            },
+        }),
+
+        prisma.contentItem.count({
+            where: {
+                status: CONTENT_STATUS.APPROVED,
+            },
+        }),
+
+        prisma.contentItem.count({
+            where: {
+                status: CONTENT_STATUS.REJECTED,
+            },
+        }),
+
+        prisma.contentItem.count({
+            where: {
+                createdAt: {
+                    gte: today,
+                },
+            },
+        }),
+
+        prisma.source.count(),
+
+        prisma.source.count({
+            where: {
+                isActive: true,
+            },
+        }),
+
+        prisma.aiEnrichment.aggregate({
+            _avg: {
+                importanceScore: true,
+            },
+        }),
+
+        prisma.contentItem.groupBy({
+            by: ["contentType"],
+            _count: true,
+        }),
+
+        prisma.contentItem.findMany({
+            take: 5,
+            orderBy: {
+                createdAt: "desc",
+            },
+            select: {
+                id: true,
+                title: true,
+                status: true,
+                publishedAt: true,
+                contentType: true,
+            },
+        }),
+
+        prisma.source.findMany({
+            select: {
+                id: true,
+                name: true,
+                _count: {
+                    select: {
+                        contentItems: true,
+                    },
+                },
+            },
+            orderBy: {
+                contentItems: {
+                    _count: "desc",
+                },
+            },
+            take: 5,
+        }),
+
+    ]);
+
 };
+
 
 module.exports = {
     getDashboardStats,

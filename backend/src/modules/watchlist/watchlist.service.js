@@ -10,7 +10,6 @@ const addToWatchlist = async (userId, contentItemId) => {
                 userId,
                 contentItemId,
             },
-            status: CONTENT_STATUS.APPROVED,
         },
     });
 
@@ -146,9 +145,72 @@ const removeWatchlistItem = async (
     };
 };
 
+const getUpcomingWatchlist = async (userId) => {
+
+    const now = new Date();
+
+    const upcoming = await prisma.watchlistItem.findMany({
+
+        where: {
+            userId,
+            watched: false,
+
+            contentItem: {
+                status: "APPROVED",
+                publishedAt: {
+                    gt: now,
+                },
+            },
+        },
+
+        include: {
+
+            contentItem: {
+
+                select: {
+
+                    id: true,
+
+                    title: true,
+
+                    slug: true,
+
+                    summary: true,
+
+                    thumbnailUrl: true,
+
+                    publishedAt: true,
+
+                    contentType: true,
+
+                    source: {
+                        select: {
+                            name: true,
+                        },
+                    },
+
+                },
+
+            },
+
+        },
+
+        orderBy: {
+            contentItem: {
+                publishedAt: "asc",
+            },
+        },
+
+    });
+
+    return upcoming;
+
+};
+
 module.exports = {
     addToWatchlist,
     getMyWatchList,
     updateWatchlistItem,
     removeWatchlistItem,
+    getUpcomingWatchlist,
 };

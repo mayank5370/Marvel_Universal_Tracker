@@ -12,6 +12,7 @@ const {
 } = require("./watchist.validation");
 const router = express.Router();
 
+
 router.post(
     "/watchlist",
     auth,
@@ -26,6 +27,12 @@ router.get(
     "/watchlist",
     auth,
     watchlistController.getMyWatchList
+);
+
+router.get(
+    "/watchlist/upcoming",
+    auth,
+    watchlistController.getUpcomingWatchlist
 );
 
 router.patch(

@@ -74,9 +74,30 @@ const removeWatchlistItem = asyncHandler(async (req, res) => {
 
 });
 
+const getUpcomingWatchlist = asyncHandler(async (req, res) => {
+
+    const result = await watchlistService.getUpcomingWatchlist(
+        req.user.userId
+    );
+
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            "Upcoming watchlist fetched successfully",
+            result,
+            {
+                count: result.length,
+            }
+        )
+    );
+
+});
+
+
 module.exports = {
     addToWatchlist,
     getMyWatchList,
     updateWatchlistItem,
     removeWatchlistItem,
+    getUpcomingWatchlist,
 };
